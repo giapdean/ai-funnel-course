@@ -48,14 +48,14 @@ function getSheet(sheetName) {
   return ss.getSheetByName(sheetName);
 }
 
-function generateRefCode(email) {
-  // ⚡ LUÔN dùng email-based code (đồng bộ với frontend index.html)
-  // Công thức: lấy prefix email (trước @), viết hoa, tối đa 6 ký tự, thay ký tự đặc biệt bằng X
-  if (!email) {
-    Logger.log("⚠️ generateRefCode: email is empty! Returning fallback 'NOMAIL'");
-    return "NOMAIL";
+function generateRefCode(phone) {
+  // ⚡ Dùng số điện thoại làm RefCode (đồng bộ với frontend index.html)
+  // Công thức: chỉ giữ số, lấy 6 chữ số cuối
+  if (!phone) {
+    Logger.log("⚠️ generateRefCode: phone is empty!");
+    return "000000";
   }
-  return email.split('@')[0].toUpperCase().substring(0, 6).replace(/[^A-Z0-9]/g, "X");
+  return phone.replace(/\D/g, "").slice(-6);
 }
 
 function generatePaymentCode(email) {
@@ -102,7 +102,7 @@ function handleRegister(data) {
   const referredBy = (data.referredBy || "").trim().toUpperCase();
 
   // Tạo RefCode và PaymentCode
-  const refCode = generateRefCode(email);
+  const refCode = generateRefCode(phone);
   const paymentCode = generatePaymentCode(email);
   const id = Utilities.getUuid();
   const timestamp = new Date();

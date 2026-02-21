@@ -770,8 +770,8 @@
                     const paymentCode = `AIFUNNEL${data.phone.slice(-4)}${Date.now().toString().slice(-3)}`;
                     showPaymentStep(paymentCode);
                 } else {
-                    // ⚡ Đồng bộ với backend Code.gs generateRefCode(): prefix email, 6 ký tự, hoa, thay đặc biệt bằng X
-                    const myRefCode = data.email.split('@')[0].toUpperCase().substring(0, 6).replace(/[^A-Z0-9]/g, 'X');
+                    // ⚡ Đồng bộ với backend Code.gs: RefCode = 6 số cuối của SĐT
+                    const myRefCode = data.phone.replace(/\D/g, '').slice(-6);
                     showReferralStep(myRefCode);
                 }
             } catch (err) {
