@@ -169,18 +169,24 @@ function checkAndGrantFreeAccess(referrerRefCode) {
 
   Logger.log("📊 Referral count for " + refCodeTarget + ": " + count + " | Referrer found at row: " + referrerRow);
 
-  // Nếu đủ 2 người và người giới thiệu vẫn còn Pending -> cấp Free
-  if (count >= 2 && referrerRow > 0 && referrerData) {
-    const currentStatus = String(referrerData[statusCol] || "").trim().toLowerCase();
-    // Chỉ upgrade nếu đang Pending (tránh override Paid)
-    if (currentStatus === "pending") {
-      sheet.getRange(referrerRow, statusCol + 1).setValue("Free");
-      // Gửi email nếu chưa gửi
-      if (!referrerData[emailSentCol]) {
-        sendCourseEmail(referrerData[emailCol], referrerData[nameCol], "free");
-        sheet.getRange(referrerRow, emailSentCol + 1).setValue(true);
-        Logger.log("✅ Cấp Free cho: " + referrerData[emailCol]);
-      }
+  if (!referrerData || referrerRow < 0) return;
+
+  const currentStatus = String(referrerData[statusCol] || "").trim().toLowerCase();
+
+  // 🔔 Khi có đúng 1 người giới thiệu -> gửi email thông báo tiến độ
+  if (count === 1 && currentStatus === "pending") {
+    sendReferralProgressEmail(referrerData[emailCol], referrerData[nameCol], count, refCodeTarget);
+    Logger.log("📧 Gửi email thông báo 1 referral cho: " + referrerData[emailCol]);
+  }
+
+  // 🎉 Nếu đủ 2 người và người giới thiệu vẫn còn Pending -> cấp Free
+  if (count >= 2 && currentStatus === "pending") {
+    sheet.getRange(referrerRow, statusCol + 1).setValue("Free");
+    // Gửi email nếu chưa gửi
+    if (!referrerData[emailSentCol]) {
+      sendCourseEmail(referrerData[emailCol], referrerData[nameCol], "free");
+      sheet.getRange(referrerRow, emailSentCol + 1).setValue(true);
+      Logger.log("✅ Cấp Free cho: " + referrerData[emailCol]);
     }
   }
 }
