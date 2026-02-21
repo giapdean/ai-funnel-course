@@ -242,33 +242,121 @@ function handleSepayWebhook(data) {
 }
 
 // ============================================================
-// EMAIL SERVICE
+// EMAIL SERVICE — Premium HTML Templates
 // ============================================================
+
+/**
+ * Tạo base HTML template cho email (dark theme, đồng bộ giao diện web)
+ */
+function getEmailTemplate(title, contentHtml, ctaText, ctaUrl) {
+  return '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
+    + '<body style="margin:0;padding:0;background-color:#0a0a0a;font-family:Segoe UI,Roboto,Helvetica,Arial,sans-serif;">'
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0a0a0a;padding:40px 20px;"><tr><td align="center">'
+    + '<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">'
+    // Header gradient
+    + '<tr><td style="background:linear-gradient(135deg,#ff3366,#ff7733);border-radius:16px 16px 0 0;padding:32px 40px;text-align:center;">'
+    + '<h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.5px;">' + title + '</h1>'
+    + '</td></tr>'
+    // Body
+    + '<tr><td style="background-color:#18181b;padding:32px 40px;border-left:1px solid rgba(255,255,255,0.08);border-right:1px solid rgba(255,255,255,0.08);">'
+    + contentHtml
+    + '</td></tr>'
+    // CTA Button (optional)
+    + (ctaText ? '<tr><td style="background-color:#18181b;padding:0 40px 32px;text-align:center;border-left:1px solid rgba(255,255,255,0.08);border-right:1px solid rgba(255,255,255,0.08);">'
+      + '<a href="' + ctaUrl + '" style="display:inline-block;background:linear-gradient(135deg,#ff3366,#ff7733);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:999px;font-weight:700;font-size:16px;">' + ctaText + '</a>'
+      + '</td></tr>' : '')
+    // Footer
+    + '<tr><td style="background-color:#111113;border-radius:0 0 16px 16px;padding:24px 40px;text-align:center;border:1px solid rgba(255,255,255,0.05);border-top:none;">'
+    + '<p style="margin:0;color:#71717a;font-size:12px;line-height:1.6;">'
+    + '© 2026 Ai Funnel Course · Powered by Antigravity<br>'
+    + 'Email này được gửi tự động, vui lòng không trả lời.</p>'
+    + '</td></tr>'
+    + '</table></td></tr></table></body></html>';
+}
+
+/**
+ * Gửi email xác nhận khóa học (Paid hoặc Free) — HTML Premium
+ */
 function sendCourseEmail(toEmail, name, type) {
-  const subject = type === "paid"
-    ? "🎉 Xác nhận Đăng ký Khóa Học Xây Dựng Ai Funnel!"
-    : "🎁 Bạn đã nhận được Khóa Học Ai Funnel Miễn Phí!";
+  var isPaid = (type === "paid");
+  var subject = isPaid
+    ? "🎉 Xác nhận Đăng ký — Khóa Học Xây Dựng Ai Funnel"
+    : "🎁 Chúc mừng — Bạn nhận được Vé Miễn Phí!";
 
-  const body = `
-Xin chào ${name},
+  var title = isPaid ? "Đăng ký thành công! 🎉" : "Bạn đã nhận Vé Miễn Phí! 🎁";
+  var greeting = isPaid
+    ? "Cảm ơn bạn đã đăng ký <strong>Khóa Học Xây Dựng Ai Funnel</strong>!"
+    : "Chúc mừng! Bạn đã đủ điều kiện nhận <strong>Vé Miễn Phí</strong> nhờ chương trình giới thiệu!";
 
-${type === "paid"
-  ? "Cảm ơn bạn đã đăng ký Khóa Học Xây Dựng Ai Funnel!"
-  : "Chúc mừng! Bạn đã đủ điều kiện nhận Khóa Học Ai Funnel MIỄN PHÍ nhờ chương trình giới thiệu!"}
+  var badgeBg = isPaid ? "linear-gradient(135deg,#ff3366,#ff7733)" : "linear-gradient(135deg,#22c55e,#16a34a)";
+  var badgeText = isPaid ? "ĐÃ THANH TOÁN" : "MIỄN PHÍ";
 
-📅 Ngày học: ${CONFIG.COURSE_DATE}
-📹 Link Zoom: ${CONFIG.ZOOM_LINK || "[Sắp cập nhật]"}
-🎁 Bộ GAS Kit của bạn: ${CONFIG.GAS_KIT_LINK || "[Sắp cập nhật]"}
+  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
+    + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">' + greeting + '</p>'
+    // Info Card
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
+    + '<tr><td style="padding:20px 24px;">'
+    + '<table width="100%" cellpadding="0" cellspacing="0">'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:40%;">📅 Ngày học</td>'
+    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + CONFIG.COURSE_DATE + '</td></tr>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">📹 Link Zoom</td>'
+    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.ZOOM_LINK || "Sắp cập nhật") + '</td></tr>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">🎁 GAS Kit</td>'
+    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.GAS_KIT_LINK || "Sắp cập nhật") + '</td></tr>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">💳 Hình thức</td>'
+    + '<td style="padding:8px 0;font-size:14px;font-weight:700;">'
+    + '<span style="background:' + badgeBg + ';color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">' + badgeText + '</span>'
+    + '</td></tr>'
+    + '</table></td></tr></table>'
+    + '<p style="color:#71717a;font-size:13px;margin:24px 0 0;line-height:1.6;">Chúng tôi sẽ gửi thêm thông tin chi tiết trước ngày học. Hãy theo dõi email nhé!</p>';
 
-Trân trọng,
-Team Ai Funnel
-  `.trim();
+  var html = getEmailTemplate(title, contentHtml, "", "");
 
   try {
-    GmailApp.sendEmail(toEmail, subject, body);
-    Logger.log("📧 Email gửi thành công tới: " + toEmail);
+    GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
+    Logger.log("📧 Email HTML gửi thành công tới: " + toEmail);
   } catch (err) {
     Logger.log("⚠️ Lỗi gửi email: " + err.message);
+  }
+}
+
+/**
+ * Gửi email thông báo tiến độ referral (khi có 1 người đăng ký qua link)
+ */
+function sendReferralProgressEmail(toEmail, name, currentCount, refCode) {
+  var subject = "🔥 Có người đăng ký qua link của bạn!";
+  var remaining = 2 - currentCount;
+  var siteUrl = "https://ai-funnel-course.vercel.app";
+  var progressWidth = (currentCount * 50) + "%";
+
+  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
+    + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">'
+    + 'Tin vui! 🎉 Có <strong style="color:#ff3366;">1 người</strong> vừa đăng ký khóa học qua link giới thiệu của bạn!</p>'
+    // Progress Card
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
+    + '<tr><td style="padding:24px;">'
+    + '<p style="color:#a1a1aa;font-size:13px;margin:0 0 12px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Tiến độ giới thiệu</p>'
+    // Progress Bar
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">'
+    + '<tr><td style="background-color:#3f3f46;border-radius:999px;height:8px;padding:0;">'
+    + '<div style="background:linear-gradient(90deg,#ff3366,#ff7733);border-radius:999px;height:8px;width:' + progressWidth + ';"></div>'
+    + '</td></tr></table>'
+    + '<table width="100%" cellpadding="0" cellspacing="0">'
+    + '<tr><td style="color:#fafafa;font-size:28px;font-weight:800;">' + currentCount + '<span style="color:#71717a;font-size:16px;font-weight:400;"> / 2</span></td>'
+    + '<td style="text-align:right;color:#ff7733;font-size:14px;font-weight:600;">Còn ' + remaining + ' người nữa!</td></tr>'
+    + '</table></td></tr></table>'
+    + '<p style="color:#d4d4d8;font-size:15px;margin:24px 0 8px;line-height:1.7;">'
+    + 'Chỉ cần mời thêm <strong style="color:#ff7733;">' + remaining + ' người</strong> nữa, bạn sẽ nhận ngay <strong style="color:#22c55e;">Vé Miễn Phí</strong> tham gia khóa học! 🚀</p>'
+    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Chia sẻ link bên dưới cho bạn bè để hoàn thành thử thách nhé!</p>';
+
+  var referralLink = siteUrl + "?ref=" + refCode;
+  var html = getEmailTemplate("Bạn có 1 Referral mới! 🔥", contentHtml, "Chia sẻ link ngay", referralLink);
+
+  try {
+    GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
+    Logger.log("📧 Referral progress email gửi tới: " + toEmail);
+  } catch (err) {
+    Logger.log("⚠️ Lỗi gửi referral progress email: " + err.message);
   }
 }
 
