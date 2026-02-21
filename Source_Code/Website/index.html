@@ -571,15 +571,15 @@
             <!-- Gift Box (clickable) -->
             <div id="giftBox" onclick="toggleGamePanel()" class="cursor-pointer mx-auto w-fit group">
                 <div
-                    class="fire-border-wrapper rounded-2xl p-[2px] transition-transform hover:scale-105 active:scale-95">
-                    <div class="bg-zinc-900 rounded-2xl px-8 py-6 flex items-center gap-4">
-                        <div class="text-5xl animate-bounce">🎁</div>
-                        <div class="text-left">
-                            <p class="text-white font-bold text-lg">Nhận bộ GAS Kit Miễn Phí</p>
-                            <p class="text-zinc-400 text-sm">Bấm để xem hướng dẫn chơi →</p>
+                    class="relative rounded-2xl p-[1px] bg-gradient-to-r from-brand-red/40 to-brand-orange/40 transition-all hover:from-brand-red/70 hover:to-brand-orange/70 hover:scale-105 active:scale-95">
+                    <div class="bg-zinc-900/95 rounded-2xl px-8 py-5 flex items-center gap-5">
+                        <div class="text-4xl">🎁</div>
+                        <div class="text-left min-w-0">
+                            <p class="text-white font-bold text-lg leading-snug">Nhận bộ GAS Kit Miễn Phí</p>
+                            <p class="text-zinc-500 text-sm">Bấm để xem hướng dẫn chơi →</p>
                         </div>
                         <i data-lucide="chevron-down" id="giftChevron"
-                            class="w-5 h-5 text-zinc-500 transition-transform group-hover:text-white"></i>
+                            class="w-5 h-5 text-zinc-500 transition-transform duration-300 group-hover:text-white flex-shrink-0"></i>
                     </div>
                 </div>
             </div>
