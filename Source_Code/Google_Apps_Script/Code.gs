@@ -7,8 +7,15 @@ const CONFIG = {
   SPREADSHEET_ID: "1mR7vS6nFQ-8A2v8Y3eXGBWJPB1ukm0GXTFPjs3qmOgs",
   SEPAY_TOKEN: "0651316513131331",
   COURSE_DATE: "2026-03-15",
-  ZOOM_LINK: "", // Điền sau khi có link Zoom
-  GAS_KIT_LINK: "", // Điền sau khi có link GAS Kit
+  ZOOM_LINK: "",
+  GAS_KIT_LINK: "",
+  // Facebook Scraper RapidAPI
+  RAPIDAPI_KEY: "19e1e36dcemshb888996018daff6p101216jsn49b3e583a1a7",
+  RAPIDAPI_HOST: "facebook-scraper3.p.rapidapi.com",
+  // GAS Kit Drive Folder
+  GAS_KIT_FOLDER_ID: "1N2_33FMygdC_o4WXNfdO9-PdvFMyIivg",
+  GAS_KIT_FOLDER_URL: "https://drive.google.com/drive/folders/1N2_33FMygdC_o4WXNfdO9-PdvFMyIivg",
+  MIN_FOLLOWERS: 1000,
 };
 
 // ============================================================
@@ -77,6 +84,8 @@ function doPost(e) {
       return handleRegister(payload);
     } else if (action === "sepay_webhook") {
       return handleSepayWebhook(payload);
+    } else if (action === "verify_fb_share") {
+      return handleVerifyFbShare(payload);
     } else {
       return respond({ success: false, error: "Unknown action" });
     }
@@ -242,6 +251,182 @@ function handleSepayWebhook(data) {
 }
 
 // ============================================================
+// GAS KIT GAME: Facebook Share Verification
+// ============================================================
+
+/**
+ * Setup: Tạo tab GASKit trong Spreadsheet (chạy 1 lần)
+ */
+function setupGASKitSheet() {
+  var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  var existing = ss.getSheetByName("GASKit");
+  if (existing) {
+    Logger.log("⚠️ Tab GASKit đã tồn tại");
+    return;
+  }
+  var sheet = ss.insertSheet("GASKit");
+  sheet.appendRow(["ID", "Timestamp", "Email", "PostURL", "AuthorName", "AuthorURL", "Followers", "Status"]);
+  sheet.setFrozenRows(1);
+  Logger.log("✅ Tạo tab GASKit thành công");
+}
+
+/**
+ * Handler: Xác thực bài viết Facebook và cấp GAS Kit
+ */
+function handleVerifyFbShare(data) {
+  var email = (data.email || "").trim().toLowerCase();
+  var postUrl = (data.postUrl || "").trim();
+
+  if (!email || !postUrl) {
+    return respond({ success: false, error: "Vui lòng nhập Email và Link bài viết." });
+  }
+
+  // ⚡ Chống duplicate: check email đã nhận chưa
+  var sheet = getSheet("GASKit");
+  if (!sheet) {
+    // Tự tạo tab nếu chưa có
+    setupGASKitSheet();
+    sheet = getSheet("GASKit");
+  }
+  var existingData = sheet.getDataRange().getValues();
+  for (var i = 1; i < existingData.length; i++) {
+    var rowEmail = String(existingData[i][2] || "").trim().toLowerCase();
+    var rowStatus = String(existingData[i][7] || "").trim().toLowerCase();
+    if (rowEmail === email && rowStatus === "approved") {
+      return respond({ success: false, error: "Email này đã nhận GAS Kit rồi! Mỗi email chỉ được nhận 1 lần." });
+    }
+  }
+
+  // Step 1: Gọi API lấy nội dung bài viết
+  var postResult;
+  try {
+    var postApiUrl = "https://" + CONFIG.RAPIDAPI_HOST + "/post?post_url=" + encodeURIComponent(postUrl);
+    var postResponse = UrlFetchApp.fetch(postApiUrl, {
+      method: "GET",
+      headers: {
+        "x-rapidapi-host": CONFIG.RAPIDAPI_HOST,
+        "x-rapidapi-key": CONFIG.RAPIDAPI_KEY
+      },
+      muteHttpExceptions: true
+    });
+    postResult = JSON.parse(postResponse.getContentText());
+  } catch (err) {
+    Logger.log("⚠️ API post error: " + err.message);
+    return respond({ success: false, error: "Không thể kiểm tra bài viết. Vui lòng kiểm tra link." });
+  }
+
+  if (!postResult || !postResult.results || !postResult.results.message) {
+    return respond({ success: false, error: "Không tìm thấy bài viết hoặc bài viết không công khai." });
+  }
+
+  // Check hashtag #aifunnel (case-insensitive)
+  var postMessage = (postResult.results.message || "").toLowerCase();
+  if (postMessage.indexOf("#aifunnel") === -1) {
+    return respond({ success: false, error: "Bài viết chưa có hashtag #aifunnel. Vui lòng thêm hashtag và thử lại." });
+  }
+
+  // Lấy thông tin tác giả
+  var authorName = (postResult.results.author && postResult.results.author.name) || "Unknown";
+  var authorUrl = (postResult.results.author && postResult.results.author.url) || "";
+
+  if (!authorUrl) {
+    return respond({ success: false, error: "Không lấy được thông tin tác giả. Vui lòng kiểm tra bài viết." });
+  }
+
+  // Step 2: Gọi API kiểm tra followers
+  var pageResult;
+  try {
+    var pageApiUrl = "https://" + CONFIG.RAPIDAPI_HOST + "/page/details?url=" + encodeURIComponent(authorUrl);
+    var pageResponse = UrlFetchApp.fetch(pageApiUrl, {
+      method: "GET",
+      headers: {
+        "x-rapidapi-host": CONFIG.RAPIDAPI_HOST,
+        "x-rapidapi-key": CONFIG.RAPIDAPI_KEY
+      },
+      muteHttpExceptions: true
+    });
+    pageResult = JSON.parse(pageResponse.getContentText());
+  } catch (err) {
+    Logger.log("⚠️ API page error: " + err.message);
+    return respond({ success: false, error: "Không thể kiểm tra thông tin tài khoản Facebook." });
+  }
+
+  var followers = 0;
+  if (pageResult && pageResult.results) {
+    followers = parseInt(pageResult.results.followers || 0, 10);
+  }
+
+  if (followers < CONFIG.MIN_FOLLOWERS) {
+    return respond({
+      success: false,
+      error: "Tài khoản Facebook cần có tối thiểu " + CONFIG.MIN_FOLLOWERS + " followers. Hiện tại: " + followers + " followers."
+    });
+  }
+
+  // ✅ Đủ điều kiện! Ghi vào sheet
+  var id = Utilities.getUuid();
+  sheet.appendRow([id, new Date(), email, postUrl, authorName, authorUrl, followers, "Approved"]);
+
+  // Cấp quyền xem Drive folder
+  try {
+    var folder = DriveApp.getFolderById(CONFIG.GAS_KIT_FOLDER_ID);
+    folder.addViewer(email);
+    Logger.log("✅ Cấp quyền xem Drive folder cho: " + email);
+  } catch (err) {
+    Logger.log("⚠️ Lỗi cấp quyền Drive: " + err.message);
+  }
+
+  // Gửi email thông báo
+  sendGasKitEmail(email, authorName);
+
+  Logger.log("✅ GAS Kit approved cho: " + email + " | Followers: " + followers);
+
+  return respond({
+    success: true,
+    message: "Xác thực thành công! Vui lòng kiểm tra email để nhận GAS Kit.",
+    followers: followers,
+    authorName: authorName
+  });
+}
+
+/**
+ * Gửi email thông báo nhận GAS Kit — HTML Premium
+ */
+function sendGasKitEmail(toEmail, name) {
+  var subject = "🎁 Chúc mừng — Bạn đã nhận được GAS Kit Standard Miễn Phí!";
+
+  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
+    + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">'
+    + 'Chúc mừng! 🎉 Bạn đã hoàn thành thử thách và nhận được <strong style="color:#ff3366;">GAS Kit Standard</strong> miễn phí!</p>'
+    // Info Card
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
+    + '<tr><td style="padding:20px 24px;">'
+    + '<table width="100%" cellpadding="0" cellspacing="0">'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:40%;">📦 Bộ Kit</td>'
+    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">GAS Kit Standard</td></tr>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">📂 Truy cập</td>'
+    + '<td style="padding:8px 0;font-size:14px;font-weight:600;">'
+    + '<a href="' + CONFIG.GAS_KIT_FOLDER_URL + '" style="color:#ff3366;text-decoration:underline;">Mở Google Drive</a></td></tr>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">✅ Trạng thái</td>'
+    + '<td style="padding:8px 0;font-size:14px;font-weight:700;">'
+    + '<span style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">ĐÃ CẤP QUYỀN</span>'
+    + '</td></tr>'
+    + '</table></td></tr></table>'
+    + '<p style="color:#d4d4d8;font-size:15px;margin:24px 0 8px;line-height:1.7;">'
+    + 'Chúng tôi đã cấp quyền xem cho email <strong>' + toEmail + '</strong>. Bấm nút bên dưới để truy cập ngay!</p>'
+    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Lưu ý: Bạn cần đăng nhập bằng đúng email này trên Google Drive.</p>';
+
+  var html = getEmailTemplate("Bạn đã nhận GAS Kit! 🎁", contentHtml, "Truy cập GAS Kit ngay", CONFIG.GAS_KIT_FOLDER_URL);
+
+  try {
+    GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
+    Logger.log("📧 GAS Kit email gửi tới: " + toEmail);
+  } catch (err) {
+    Logger.log("⚠️ Lỗi gửi GAS Kit email: " + err.message);
+  }
+}
+
+// ============================================================
 // EMAIL SERVICE — Premium HTML Templates
 // ============================================================
 
@@ -301,8 +486,8 @@ function sendCourseEmail(toEmail, name, type) {
     + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + CONFIG.COURSE_DATE + '</td></tr>'
     + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">📹 Link Zoom</td>'
     + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.ZOOM_LINK || "Sắp cập nhật") + '</td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">🎁 GAS Kit</td>'
-    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.GAS_KIT_LINK || "Sắp cập nhật") + '</td></tr>'
+    + (isPaid ? '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">🎁 GAS Kit</td>'
+    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.GAS_KIT_LINK || "Sắp cập nhật") + '</td></tr>' : '')
     + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">💳 Hình thức</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:700;">'
     + '<span style="background:' + badgeBg + ';color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">' + badgeText + '</span>'
