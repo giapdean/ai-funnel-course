@@ -604,7 +604,8 @@
             <!-- Step 2: Payment (Hidden) -->
             <div id="stepPayment" class="hidden text-center space-y-6">
                 <div class="w-16 h-16 rounded-2xl bg-white/10 mx-auto flex items-center justify-center text-white mb-2">
-                    <i data-lucide="qr-code" class="w-8 h-8"></i></div>
+                    <i data-lucide="qr-code" class="w-8 h-8"></i>
+                </div>
                 <p class="text-sm text-zinc-300">Quét mã QR dưới đây để hoàn tất thanh toán.<br>Hệ thống tự động kích
                     hoạt sau khi nhận tiền.</p>
                 <div class="mx-auto w-52 h-52 bg-white p-3 rounded-2xl shadow-xl">
@@ -624,7 +625,8 @@
             <div id="stepReferral" class="hidden text-center space-y-6">
                 <div
                     class="w-16 h-16 rounded-2xl bg-purple-500/20 mx-auto flex items-center justify-center text-purple-400 mb-2 border border-purple-500/30">
-                    <i data-lucide="share-2" class="w-8 h-8"></i></div>
+                    <i data-lucide="share-2" class="w-8 h-8"></i>
+                </div>
                 <h4 class="font-heading text-xl font-bold text-white">Đăng ký thành công!</h4>
                 <p class="text-sm text-zinc-400">Hãy copy link dưới đây và gửi cho ít nhất 2 người bạn. Bạn sẽ nhận được
                     Email vé Miễn phí khi họ đăng ký.</p>
@@ -768,7 +770,8 @@
                     const paymentCode = `AIFUNNEL${data.phone.slice(-4)}${Date.now().toString().slice(-3)}`;
                     showPaymentStep(paymentCode);
                 } else {
-                    const myRefCode = data.email.split('@')[0].toUpperCase().substring(0, 6);
+                    // ⚡ Đồng bộ với backend Code.gs generateRefCode(): prefix email, 6 ký tự, hoa, thay đặc biệt bằng X
+                    const myRefCode = data.email.split('@')[0].toUpperCase().substring(0, 6).replace(/[^A-Z0-9]/g, 'X');
                     showReferralStep(myRefCode);
                 }
             } catch (err) {

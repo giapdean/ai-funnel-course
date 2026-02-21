@@ -49,15 +49,12 @@ function getSheet(sheetName) {
 }
 
 function generateRefCode(email) {
+  // ⚡ LUÔN dùng email-based code (đồng bộ với frontend index.html)
+  // Công thức: lấy prefix email (trước @), viết hoa, tối đa 6 ký tự, thay ký tự đặc biệt bằng X
   if (!email) {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    let code = "";
-    for (let i = 0; i < 6; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return code;
+    Logger.log("⚠️ generateRefCode: email is empty! Returning fallback 'NOMAIL'");
+    return "NOMAIL";
   }
-  // Đồng bộ với app.js: Lấy prefix email, tối đa 6 ký tự, viết hoa
   return email.split('@')[0].toUpperCase().substring(0, 6).replace(/[^A-Z0-9]/g, "X");
 }
 
