@@ -301,6 +301,7 @@ function handleVerifyFbShare(data) {
   var postResult;
   try {
     var postApiUrl = "https://" + CONFIG.RAPIDAPI_HOST + "/post?post_url=" + encodeURIComponent(postUrl);
+    Logger.log("🔗 Calling API: " + postApiUrl);
     var postResponse = UrlFetchApp.fetch(postApiUrl, {
       method: "GET",
       headers: {
@@ -309,10 +310,16 @@ function handleVerifyFbShare(data) {
       },
       muteHttpExceptions: true
     });
-    postResult = JSON.parse(postResponse.getContentText());
+    var responseCode = postResponse.getResponseCode();
+    var responseText = postResponse.getContentText();
+    Logger.log("📡 API response code: " + responseCode + " | Body (first 500): " + responseText.substring(0, 500));
+    if (responseCode !== 200) {
+      return respond({ success: false, error: "API trả về lỗi (code " + responseCode + "). Vui lòng thử lại." });
+    }
+    postResult = JSON.parse(responseText);
   } catch (err) {
     Logger.log("⚠️ API post error: " + err.message);
-    return respond({ success: false, error: "Không thể kiểm tra bài viết. Vui lòng kiểm tra link." });
+    return respond({ success: false, error: "Lỗi kết nối API: " + err.message });
   }
 
   if (!postResult || !postResult.results || !postResult.results.message) {
