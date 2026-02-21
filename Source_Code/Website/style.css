@@ -1,15 +1,17 @@
 :root {
     --bg-black: #000000;
-    --bg-dark: #050505;
+    --bg-dark: rgba(15, 15, 20, 0.6);
     --bg-card: #121216;
-    --primary-red: #DC2626;
-    --accent-gradient: linear-gradient(135deg, #DC2626, #FF6B35);
-    --text-main: #e4e4e7;
-    --text-muted: #71717a;
+    --primary-red: #ff3366;
+    --secondary-orange: #ff7733;
+    --accent-gradient: linear-gradient(135deg, var(--primary-red), var(--secondary-orange));
+    --text-main: #FAFAFA;
+    --text-muted: #A1A1AA;
+    --font-heading: 'Outfit', sans-serif;
     --font-body: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
     --glass-bg: rgba(255, 255, 255, 0.03);
-    --card-border: 1px solid #1F1F23;
+    --card-border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 * {
@@ -26,8 +28,22 @@ body {
     line-height: 1.5;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-heading {
+    font-family: var(--font-heading);
+}
+
 .bg-dark {
     background-color: var(--bg-dark);
+}
+
+.bg-pitch-black {
+    background-color: var(--bg-black);
 }
 
 .text-main {
@@ -58,52 +74,77 @@ body {
     -webkit-text-fill-color: transparent;
 }
 
-/* Orbital Background */
-.orbit-container {
+/* Noise Texture Overlay */
+.noise-overlay {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+}
+
+/* Mesh Gradient Aurora */
+.mesh-bg {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     z-index: -1;
     overflow: hidden;
-    pointer-events: none;
+    background: radial-gradient(circle at 50% 50%, #000000 0%, #050510 100%);
 }
 
-.orbit-circle {
+.aurora {
     position: absolute;
+    width: 60vw;
+    height: 60vw;
     border-radius: 50%;
-    border: 1px solid rgba(220, 38, 38, 0.05);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    filter: blur(80px);
+    opacity: 0.15;
+    animation: drift 20s infinite alternate ease-in-out;
 }
 
-.orbit-1 {
-    width: 400px;
-    height: 400px;
-    animation: orbit 20s linear infinite;
+.aurora-1 {
+    top: -20%;
+    left: -10%;
+    background: #ff3366;
+    animation-delay: 0s;
 }
 
-.orbit-2 {
-    width: 700px;
-    height: 700px;
-    animation: orbit 35s linear infinite reverse;
+.aurora-2 {
+    bottom: -10%;
+    right: -20%;
+    background: #ff7733;
+    animation-delay: -5s;
+    animation-duration: 25s;
 }
 
-.orbit-3 {
-    width: 1000px;
-    height: 1000px;
-    animation: orbit 50s linear infinite;
+.aurora-3 {
+    top: 30%;
+    left: 40%;
+    width: 40vw;
+    height: 40vw;
+    background: #8b5cf6;
+    opacity: 0.1;
+    animation-delay: -10s;
+    animation-duration: 18s;
 }
 
-@keyframes orbit {
-    from {
-        transform: translate(-50%, -50%) rotate(0deg);
+@keyframes drift {
+    0% {
+        transform: translate(0, 0) scale(1);
     }
 
-    to {
-        transform: translate(-50%, -50%) rotate(360deg);
+    33% {
+        transform: translate(5%, 10%) scale(1.1);
+    }
+
+    66% {
+        transform: translate(-5%, 5%) scale(0.9);
+    }
+
+    100% {
+        transform: translate(10%, -5%) scale(1.05);
     }
 }
 
@@ -119,18 +160,37 @@ body {
 .btn-primary {
     background: var(--accent-gradient);
     color: white;
-    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+    box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(220, 38, 38, 0.5);
+    box-shadow: 0 8px 25px rgba(255, 51, 102, 0.5);
+}
+
+.shimmer-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: skewX(-20deg);
+    animation: shimmer 3s infinite;
+    z-index: 1;
+}
+
+@keyframes shimmer {
+    100% {
+        left: 200%;
+    }
 }
 
 .btn-secondary {
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--glass-bg);
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: var(--card-border);
 }
 
 .btn-secondary:hover {
@@ -200,7 +260,7 @@ body {
     font-weight: 500;
 }
 
-/* Bento Grid */
+/* Bento Grid & Spotlight */
 .bento-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -231,6 +291,42 @@ body {
     justify-content: center;
     border-radius: 12px;
     color: var(--primary-red);
+}
+
+.spotlight-card {
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.spotlight-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 51, 102, 0.3);
+}
+
+.spotlight-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y),
+            rgba(255, 255, 255, 0.06),
+            transparent 40%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.spotlight-card:hover::before {
+    opacity: 1;
+}
+
+.spotlight-card>* {
+    position: relative;
+    z-index: 10;
 }
 
 /* Pricing & Fire Border */

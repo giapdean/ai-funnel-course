@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
 
     <!-- CSS -->
@@ -23,12 +23,15 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 
-<body class="bg-black text-main">
-    <!-- Orbital Background -->
-    <div class="orbit-container">
-        <div class="orbit-circle orbit-1"></div>
-        <div class="orbit-circle orbit-2"></div>
-        <div class="orbit-circle orbit-3"></div>
+<body class="bg-pitch-black text-main antialiased selection:bg-primary-red/30">
+    <!-- Noise Texture Overlay -->
+    <div class="noise-overlay fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- Mesh Gradient Aurora -->
+    <div class="mesh-bg fixed top-0 w-full h-screen pointer-events-none z-0 overflow-hidden">
+        <div class="aurora aurora-1"></div>
+        <div class="aurora aurora-2"></div>
+        <div class="aurora aurora-3"></div>
     </div>
 
     <!-- Sticky Navbar -->
@@ -63,22 +66,37 @@
             </p>
             <div class="flex flex-col md:flex-row gap-4 justify-center">
                 <a href="#pricing"
-                    class="btn btn-primary px-8 py-4 rounded-xl font-bold flex items-center gap-2 justify-center">
-                    Bắt đầu ngay <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                    class="btn btn-primary shimmer-btn px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 group relative overflow-hidden">
+                    <span class="relative z-10 flex items-center gap-2">Bắt đầu ngay <i data-lucide="arrow-right"
+                            class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i></span>
                 </a>
                 <a href="#features"
-                    class="btn btn-secondary px-8 py-4 rounded-xl font-bold glass flex items-center gap-2 justify-center">
+                    class="btn btn-secondary px-8 py-4 rounded-xl font-bold glass flex items-center justify-center gap-2 hover:bg-white/10 transition-colors">
                     Xem chương trình học
                 </a>
             </div>
 
-            <!-- Command Bar Mockup -->
+            <!-- macOS Terminal Mockup -->
             <div
-                class="command-bar-wrapper mt-16 max-w-3xl mx-auto glass p-2 rounded-2xl shadow-2xl border border-white/10">
-                <div class="flex items-center gap-3 px-4 py-3 bg-black/40 rounded-xl">
-                    <i data-lucide="terminal" class="w-5 h-5 text-zinc-500"></i>
-                    <div class="typing-text text-left font-mono text-sm text-zinc-400">antigravity create landing-page
-                        --viral-loop --tracking</div>
+                class="terminal-mockup mt-16 max-w-2xl mx-auto glass rounded-2xl shadow-2xl border border-white/10 text-left overflow-hidden">
+                <!-- Terminal Header -->
+                <div class="terminal-header flex items-center px-4 py-3 border-b border-white/5 bg-black/40">
+                    <div class="flex gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+                    </div>
+                    <div class="mx-auto text-xs text-muted font-mono tracking-widest uppercase">bash - ai-funnel.sh
+                    </div>
+                </div>
+                <!-- Terminal Body -->
+                <div class="p-6 font-mono text-sm leading-relaxed text-zinc-300">
+                    <div class="flex gap-3 items-start">
+                        <span class="text-primary-red font-bold">~</span>
+                        <div
+                            class="typing-text overflow-hidden whitespace-nowrap border-r-2 border-primary-red pr-1 animate-pulse">
+                            antigravity create landing-page --viral-loop --tracking</div>
+                    </div>
                 </div>
             </div>
         </div>
