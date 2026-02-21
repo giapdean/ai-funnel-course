@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
 
 <head>
     <meta charset="UTF-8">
@@ -13,90 +13,370 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
         rel="stylesheet">
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="style.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        brand: {
+                            red: '#ff3366',
+                            orange: '#ff7733',
+                            dark: '#0a0a0c',
+                            card: '#121216',
+                        }
+                    },
+                    animation: {
+                        'gradient-x': 'gradient-x 3s ease infinite',
+                        'spin-slow': 'spin 4s linear infinite',
+                        'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'marquee': 'marquee 30s linear infinite',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            },
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: 1, transform: 'scale(1)' },
+                            '50%': { opacity: .7, transform: 'scale(1.1)', boxShadow: '0 0 15px rgba(255, 51, 102, 0.5)' },
+                        },
+                        'marquee': {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-50%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Base Styles */
+        body {
+            background-color: #0a0a0c;
+            color: #FAFAFA;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-nav {
+            background: rgba(10, 10, 12, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Ambient Backgrounds */
+        .noise-overlay {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            opacity: 0.3;
+            mix-blend-mode: overlay;
+        }
+
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+        }
+
+        /* Aurora Mesh Gradient */
+        .aurora-container {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .aurora {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            animation: drift 20s infinite alternate ease-in-out;
+        }
+
+        .aurora-1 {
+            top: -10%;
+            left: -10%;
+            width: 50vw;
+            height: 50vw;
+            background: #ff3366;
+            animation-delay: 0s;
+        }
+
+        .aurora-2 {
+            bottom: 10%;
+            right: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: #ff7733;
+            animation-delay: -5s;
+            animation-duration: 25s;
+        }
+
+        .aurora-3 {
+            top: 40%;
+            left: 30%;
+            width: 40vw;
+            height: 40vw;
+            background: #8b5cf6;
+            opacity: 0.1;
+            animation-delay: -10s;
+            animation-duration: 18s;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            33% {
+                transform: translate(5%, 10%) scale(1.1);
+            }
+
+            66% {
+                transform: translate(-5%, 5%) scale(0.9);
+            }
+
+            100% {
+                transform: translate(10%, -5%) scale(1.05);
+            }
+        }
+
+        /* Spotlight Hover Effect */
+        .spotlight-card {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .spotlight-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(255, 51, 102, 0.3);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .spotlight-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(255, 255, 255, 0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .spotlight-card:hover::before {
+            opacity: 1;
+        }
+
+        .spotlight-card>* {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Animated Border for Pro Card */
+        .fire-border-wrapper {
+            position: relative;
+            border-radius: 1.5rem;
+            padding: 1px;
+            overflow: hidden;
+        }
+
+        .fire-border-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent 0deg, transparent 90deg, #ff3366 180deg, #ff7733 270deg, transparent 360deg);
+            animation: spin 4s linear infinite;
+            z-index: 0;
+        }
+
+        .fire-border-content {
+            background: #121216;
+            border-radius: calc(1.5rem - 1px);
+            position: relative;
+            z-index: 1;
+            height: 100%;
+        }
+
+        /* Animations */
+        .typing-text {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #ff3366;
+            animation: typing 3s steps(40, end), blink .75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from {
+                width: 0
+            }
+
+            to {
+                width: 100%
+            }
+        }
+
+        @keyframes blink {
+
+            from,
+            to {
+                border-color: transparent
+            }
+
+            50% {
+                border-color: #ff3366
+            }
+        }
+
+        .appear {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        /* Ticker Fade Mask */
+        .ticker-mask {
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+    </style>
 </head>
 
-<body class="bg-pitch-black text-main antialiased selection:bg-primary-red/30">
-    <!-- Noise Texture Overlay -->
-    <div class="noise-overlay fixed inset-0 pointer-events-none z-0"></div>
-
-    <!-- Mesh Gradient Aurora -->
-    <div class="mesh-bg fixed top-0 w-full h-screen pointer-events-none z-0 overflow-hidden">
+<body class="bg-brand-dark text-white antialiased selection:bg-brand-red/30 selection:text-white">
+    <!-- Ambient Backgrounds -->
+    <div class="noise-overlay fixed inset-0 pointer-events-none z-[1]"></div>
+    <div class="aurora-container">
         <div class="aurora aurora-1"></div>
         <div class="aurora aurora-2"></div>
         <div class="aurora aurora-3"></div>
     </div>
+    <div class="absolute inset-0 bg-grid pointer-events-none z-0 h-[100vh]"></div>
 
     <!-- Sticky Navbar -->
-    <div class="fixed top-0 w-full z-50 flex justify-center px-4">
-        <nav class="navbar-floating w-full max-w-5xl h-14 flex items-center justify-between">
-            <div class="logo font-bold text-xl tracking-tighter flex items-center gap-2">
-                <i data-lucide="zap" class="text-primary-coral"></i>
-                <span class="text-white">Ai<span class="text-primary-coral">Funnel</span></span>
-            </div>
-            <div class="hidden md:flex gap-8 text-sm font-medium text-zinc-400">
+    <nav class="glass-nav sticky top-0 z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#"
+                class="font-heading font-bold text-xl tracking-tighter flex items-center gap-2 hover:opacity-80 transition-opacity">
+                <i data-lucide="zap" class="text-brand-red w-6 h-6"></i>
+                <span>Ai<span class="text-brand-red">Funnel</span></span>
+            </a>
+            <div class="hidden md:flex gap-8 text-sm font-medium text-zinc-300">
                 <a href="#features" class="hover:text-white transition-colors">Tính năng</a>
                 <a href="#showcase" class="hover:text-white transition-colors">Showcase</a>
                 <a href="#pricing" class="hover:text-white transition-colors">Học phí</a>
             </div>
-            <a href="#pricing" class="btn btn-primary text-sm px-4 py-1.5 font-semibold text-white">Đăng ký ngay</a>
-        </nav>
-    </div>
+            <a href="#pricing"
+                class="bg-white text-black text-sm px-6 py-2.5 rounded-full font-semibold hover:bg-zinc-200 transition-colors shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                Đăng ký ngay
+            </a>
+        </div>
+    </nav>
 
     <!-- Hero Section -->
-    <section class="hero-section relative pt-20 pb-32 overflow-hidden">
-        <div class="container mx-auto px-6 text-center relative z-10">
+    <section class="relative pt-24 pb-32 overflow-hidden z-10">
+        <div class="container mx-auto px-6 text-center">
+            <!-- Badge -->
             <div
-                class="badge-capsule inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-6 border border-white/5 bg-white/5 text-zinc-300">
-                <span class="pulse-dot"></span>
+                class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold mb-8 border border-brand-red/30 bg-brand-red/10 text-brand-red backdrop-blur-md">
+                <span class="w-1.5 h-1.5 rounded-full bg-brand-red animate-pulse-glow"></span>
                 Khóa học đặc biệt dành cho Marketer & Manager
             </div>
-            <h1 class="hero-title text-5xl md:text-7xl font-extrabold tracking-tight leading-tight mb-6 text-white">
-                Xây Dựng <span class="gradient-text">AI Funnel</span><br>Tự Động 100%
+
+            <!-- Headline -->
+            <h1 class="font-heading text-5xl md:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight">
+                Xây Dựng <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-purple-500 to-brand-orange animate-gradient-x">AI
+                    Funnel</span><br>
+                Tự Động 100%
             </h1>
-            <p class="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-medium">
-                Ứng dụng Antigravity và Google Apps Script để tạo Landing Page, Game Viral và đo lường chiến dịch chỉ
-                với một người.
+
+            <p class="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-light leading-relaxed">
+                Ứng dụng Antigravity và Google Apps Script để tạo Landing Page, Game Viral và đo lường chiến dịch <b
+                    class="text-white">chỉ với một người</b>.
             </p>
-            <div class="flex flex-col md:flex-row gap-4 justify-center">
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
                 <a href="#pricing"
-                    class="btn btn-primary px-8 py-3.5 font-semibold flex items-center justify-center gap-2 group transition-transform">
-                    <span>Bắt đầu ngay</span> <i data-lucide="arrow-right"
-                        class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+                    class="group relative px-8 py-4 bg-gradient-to-r from-brand-red to-brand-orange rounded-xl font-bold text-white shadow-[0_0_30px_rgba(255,51,102,0.3)] hover:shadow-[0_0_40px_rgba(255,51,102,0.5)] transition-all overflow-hidden flex items-center gap-2">
+                    <div
+                        class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
+                    </div>
+                    <span class="relative z-10 flex items-center gap-2">
+                        Bắt đầu ngay <i data-lucide="arrow-right"
+                            class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
+                    </span>
                 </a>
                 <a href="#features"
-                    class="btn btn-secondary px-8 py-3.5 font-semibold flex items-center justify-center gap-2 hover:bg-white/10 transition-colors">
-                    Xem chương trình học
+                    class="px-8 py-4 glass rounded-xl font-bold text-white hover:bg-white/10 transition-colors flex items-center gap-2">
+                    <i data-lucide="play-circle" class="w-5 h-5 text-zinc-400"></i> Xem chương trình
                 </a>
             </div>
 
-            <!-- macOS Terminal Mockup -->
-            <div
-                class="terminal-mockup mt-16 max-w-2xl mx-auto glass rounded-2xl shadow-2xl border border-white/10 text-left overflow-hidden">
-                <!-- Terminal Header -->
-                <div class="terminal-header flex items-center px-4 py-3 border-b border-white/5 bg-transparent">
-                    <div class="flex gap-2">
-                        <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
-                        <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
-                        <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
-                    </div>
-                    <div class="mx-auto text-xs text-zinc-500 font-mono tracking-widest uppercase">bash - ai-funnel.sh
-                    </div>
+            <!-- Terminal Mockup -->
+            <div class="mt-20 max-w-3xl mx-auto relative group perspective-1000">
+                <!-- Glow behind terminal -->
+                <div
+                    class="absolute -inset-1 bg-gradient-to-r from-brand-red to-brand-orange rounded-2xl blur-2xl opacity-20 group-hover:opacity-40 transition duration-1000">
                 </div>
-                <!-- Terminal Body -->
-                <div class="p-6 font-mono text-sm leading-relaxed text-zinc-400">
-                    <div class="flex gap-3 items-start">
-                        <span class="text-primary-coral font-bold">~</span>
+
+                <div
+                    class="relative glass rounded-2xl border border-white/10 text-left overflow-hidden shadow-2xl bg-[#0a0a0c]/80 backdrop-blur-2xl">
+                    <!-- Terminal Header -->
+                    <div class="flex items-center px-4 py-3 border-b border-white/5 bg-white/5">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-[#ff5f56] shadow-sm"></div>
+                            <div class="w-3 h-3 rounded-full bg-[#ffbd2e] shadow-sm"></div>
+                            <div class="w-3 h-3 rounded-full bg-[#27c93f] shadow-sm"></div>
+                        </div>
                         <div
-                            class="typing-text overflow-hidden whitespace-nowrap border-r-2 border-primary-coral pr-1 animate-pulse text-zinc-300">
-                            antigravity create landing-page --viral-loop --tracking</div>
+                            class="mx-auto text-xs text-zinc-500 font-mono tracking-widest uppercase flex items-center gap-2">
+                            <i data-lucide="terminal" class="w-3 h-3"></i> bash - ai-funnel.sh
+                        </div>
+                    </div>
+                    <!-- Terminal Body -->
+                    <div class="p-6 font-mono text-sm leading-relaxed text-zinc-300 min-h-[120px] flex items-center">
+                        <div class="flex gap-3 items-center w-full">
+                            <span class="text-brand-red font-bold text-lg">❯</span>
+                            <div class="typing-text text-green-400">antigravity create landing-page --viral-loop
+                                --tracking</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -104,59 +384,108 @@
     </section>
 
     <!-- Logo Ticker -->
-    <div class="logo-ticker py-12 border-y border-white/5 bg-black/50">
-        <div class="ticker-content flex gap-20 items-center overflow-hidden">
-            <div class="ticker-track flex gap-20 items-center">
-                <span class="ticker-item"><i data-lucide="command"></i> Antigravity</span>
-                <span class="ticker-item"><i data-lucide="database"></i> Google Sheets</span>
-                <span class="ticker-item"><i data-lucide="mail"></i> Gmail API</span>
-                <span class="ticker-item"><i data-lucide="layout"></i> App Script</span>
-                <span class="ticker-item"><i data-lucide="activity"></i> SePay</span>
-                <!-- Duplicate for seamless scroll -->
-                <span class="ticker-item"><i data-lucide="command"></i> Antigravity</span>
-                <span class="ticker-item"><i data-lucide="database"></i> Google Sheets</span>
-                <span class="ticker-item"><i data-lucide="mail"></i> Gmail API</span>
-                <span class="ticker-item"><i data-lucide="layout"></i> App Script</span>
-                <span class="ticker-item"><i data-lucide="activity"></i> SePay</span>
+    <div class="py-10 border-y border-white/5 bg-black/40 backdrop-blur-md relative z-10">
+        <div class="container mx-auto px-6 ticker-mask overflow-hidden">
+            <div class="flex w-[200%] animate-marquee">
+                <!-- Set 1 -->
+                <div class="flex w-1/2 justify-around items-center">
+                    <span
+                        class="flex items-center gap-2 text-zinc-400 font-medium text-sm hover:text-white transition-colors cursor-default"><i
+                            data-lucide="command" class="w-5 h-5"></i> Antigravity</span>
+                    <span
+                        class="flex items-center gap-2 text-zinc-400 font-medium text-sm hover:text-white transition-colors cursor-default"><i
+                            data-lucide="database" class="w-5 h-5"></i> Google Sheets</span>
+                    <span
+                        class="flex items-center gap-2 text-zinc-400 font-medium text-sm hover:text-white transition-colors cursor-default"><i
+                            data-lucide="mail" class="w-5 h-5"></i> Gmail API</span>
+                    <span
+                        class="flex items-center gap-2 text-zinc-400 font-medium text-sm hover:text-white transition-colors cursor-default"><i
+                            data-lucide="code-2" class="w-5 h-5"></i> App Script</span>
+                    <span
+                        class="flex items-center gap-2 text-zinc-400 font-medium text-sm hover:text-white transition-colors cursor-default"><i
+                            data-lucide="credit-card" class="w-5 h-5"></i> SePay</span>
+                </div>
+                <!-- Set 2 (Duplicate for seamless loop) -->
+                <div class="flex w-1/2 justify-around items-center">
+                    <span
+                        class="flex items-center gap-2 text-zinc-400 font-medium text-sm hover:text-white transition-colors cursor-default"><i
+                            data-lucide="command" class="w-5 h-5"></i> Antigravity</span>
+                    <span
+                        class="flex items-center gap-2 text-zinc-400 font-medium text-sm hover:text-white transition-colors cursor-default"><i
+                            data-lucide="database" class="w-5 h-5"></i> Google Sheets</span>
+                    <span
+                        class="flex items-center gap-2 text-zinc-400 font-medium text-sm hover:text-white transition-colors cursor-default"><i
+                            data-lucide="mail" class="w-5 h-5"></i> Gmail API</span>
+                    <span
+                        class="flex items-center gap-2 text-zinc-400 font-medium text-sm hover:text-white transition-colors cursor-default"><i
+                            data-lucide="code-2" class="w-5 h-5"></i> App Script</span>
+                    <span
+                        class="flex items-center gap-2 text-zinc-400 font-medium text-sm hover:text-white transition-colors cursor-default"><i
+                            data-lucide="credit-card" class="w-5 h-5"></i> SePay</span>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Features Section (Bento Grid) -->
-    <section id="features" class="py-24 bg-dark">
+    <section id="features" class="py-24 relative z-10">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-5xl font-bold mb-4">Mọi thứ bạn cần để <span class="text-primary-coral">Làm
-                        Chủ</span></h2>
-                <p class="text-zinc-400 text-lg">Từ ý tưởng đến thực thi, không cần rành code.</p>
+            <div class="text-center mb-16 max-w-2xl mx-auto">
+                <h2 class="font-heading text-3xl md:text-5xl font-bold mb-4 tracking-tight">Mọi thứ bạn cần để <span
+                        class="text-brand-red">Làm Chủ</span></h2>
+                <p class="text-zinc-400 text-lg">Từ ý tưởng đến thực thi, hệ thống tự động hóa hoàn toàn không cần nền
+                    tảng code phức tạp.</p>
             </div>
 
-            <div class="bento-grid">
-                <div class="bento-item bento-large glass p-8 rounded-3xl group">
-                    <div class="icon-box glass mb-6"><i data-lucide="rocket"></i></div>
-                    <h3 class="text-2xl font-bold mb-3">Tự tay tạo Landing Page</h3>
-                    <p class="text-muted">Học cách sử dụng Antigravity để code Landing Page chuẩn SEO, mượt mà chỉ trong
-                        vài phút.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[minmax(200px,auto)]">
+                <!-- Large Box -->
+                <div
+                    class="spotlight-card glass p-8 rounded-3xl md:col-span-2 md:row-span-2 flex flex-col justify-between group">
+                    <div>
+                        <div
+                            class="w-14 h-14 rounded-2xl glass flex items-center justify-center text-brand-red mb-6 border border-white/10 group-hover:scale-110 transition-transform">
+                            <i data-lucide="rocket" class="w-7 h-7"></i>
+                        </div>
+                        <h3 class="font-heading text-2xl font-bold mb-3">Tự tay tạo Landing Page</h3>
+                        <p class="text-zinc-400 max-w-md">Học cách sử dụng Antigravity để code Landing Page chuẩn SEO,
+                            mượt mà chỉ trong vài phút. Tối ưu chuyển đổi tối đa.</p>
+                    </div>
                     <div
-                        class="bento-visual mt-8 h-48 bg-gradient-to-br from-primary-coral/20 to-orange-500/20 rounded-2xl border border-white/5">
+                        class="mt-8 h-48 w-full bg-gradient-to-br from-brand-red/20 to-brand-orange/10 rounded-2xl border border-white/5 relative overflow-hidden flex items-center justify-center">
+                        <i data-lucide="layout-template" class="w-20 h-20 text-white/20"></i>
                     </div>
                 </div>
-                <div class="bento-item bento-tall glass p-8 rounded-3xl group">
-                    <div class="icon-box glass mb-6"><i data-lucide="share-2"></i></div>
-                    <h3 class="text-2xl font-bold mb-3">Viral Loop Marketing</h3>
-                    <p class="text-muted">Thiết lập chương trình Share nhận quà tự động. Mỗi học viên giới thiệu 2 người
-                        sẽ được học Free.</p>
+
+                <!-- Tall Box -->
+                <div class="spotlight-card glass p-8 rounded-3xl md:col-span-1 md:row-span-2 flex flex-col group">
+                    <div
+                        class="w-14 h-14 rounded-2xl glass flex items-center justify-center text-purple-400 mb-6 border border-white/10 group-hover:scale-110 transition-transform">
+                        <i data-lucide="share-2" class="w-7 h-7"></i>
+                    </div>
+                    <h3 class="font-heading text-2xl font-bold mb-3">Viral Loop Marketing</h3>
+                    <p class="text-zinc-400 flex-grow">Thiết lập chương trình Share nhận quà tự động. Mỗi học viên giới
+                        thiệu 2 người sẽ được học Free. Tự động hóa qua Email.</p>
                 </div>
-                <div class="bento-item bento-medium glass p-8 rounded-3xl group">
-                    <div class="icon-box glass mb-6"><i data-lucide="credit-card"></i></div>
-                    <h3 class="text-2xl font-bold mb-3">Thanh toán tự động</h3>
-                    <p class="text-muted">Tích hợp SePay QR Code để xác nhận học viên ngay lập tức khi tiền về tài
-                        khoản.</p>
+
+                <!-- Medium Box 1 -->
+                <div class="spotlight-card glass p-8 rounded-3xl group">
+                    <div
+                        class="w-12 h-12 rounded-2xl glass flex items-center justify-center text-green-400 mb-5 border border-white/10 group-hover:scale-110 transition-transform">
+                        <i data-lucide="credit-card" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold mb-2">Thanh toán tự động</h3>
+                    <p class="text-zinc-400 text-sm">Tích hợp SePay QR Code xác nhận học viên ngay lập tức khi tiền về.
+                    </p>
                 </div>
-                <div class="bento-item bento-medium glass p-8 rounded-3xl group">
-                    <div class="icon-box glass mb-6"><i data-lucide="bar-chart-3"></i></div>
-                    <h3 class="text-2xl font-bold mb-3">Đo lường thời gian thực</h3>
-                    <p class="text-muted">Toàn bộ dữ liệu tự động đổ về Google Sheets. Quản lý chiến dịch ngay trên điện
+
+                <!-- Medium Box 2 -->
+                <div class="spotlight-card glass p-8 rounded-3xl group">
+                    <div
+                        class="w-12 h-12 rounded-2xl glass flex items-center justify-center text-blue-400 mb-5 border border-white/10 group-hover:scale-110 transition-transform">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold mb-2">Đo lường Real-time</h3>
+                    <p class="text-zinc-400 text-sm">Toàn bộ dữ liệu tự động đổ về Google Sheets. Quản lý trên điện
                         thoại.</p>
                 </div>
             </div>
@@ -164,157 +493,332 @@
     </section>
 
     <!-- Pricing Section -->
-    <section id="pricing" class="py-24">
+    <section id="pricing" class="py-24 relative z-10">
         <div class="container mx-auto px-6">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">Chọn lộ trình của bạn</h2>
-                <p class="text-muted">Đăng ký mua thẳng hoặc tham gia thử thách chia sẻ để nhận vé Free.</p>
+                <h2 class="font-heading text-4xl md:text-5xl font-bold mb-4 tracking-tight">Chọn lộ trình của bạn</h2>
+                <p class="text-zinc-400 text-lg">Đăng ký mua thẳng hoặc tham gia thử thách chia sẻ để nhận vé Free.</p>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-8 max-w-5xl mx-auto items-stretch">
+            <div class="flex flex-col lg:flex-row gap-8 max-w-5xl mx-auto items-center lg:items-stretch">
+
                 <!-- Free Option -->
-                <div class="pricing-card flex-1 glass p-8 rounded-3xl border border-white/10 flex flex-col">
-                    <h3 class="text-xl font-bold mb-2">Thử thách Viral</h3>
-                    <div class="text-4xl font-bold mb-6">0đ <span class="text-sm font-normal text-muted">/ chia
-                            sẻ</span></div>
-                    <ul class="space-y-4 mb-8 flex-1">
-                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
-                                class="text-primary-coral w-4 h-4"></i> Chia sẻ cho 2 người bạn đăng ký</li>
-                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
-                                class="text-primary-coral w-4 h-4"></i> Nhận vé học Zoom miễn phí</li>
-                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
-                                class="text-primary-coral w-4 h-4"></i> Nhận bộ GAS Kit cơ bản</li>
+                <div class="spotlight-card w-full lg:w-1/2 glass p-8 rounded-3xl border border-white/10 flex flex-col mt-4 lg:mt-0 opacity-0 translate-y-5 transition-all duration-700"
+                    style="transition-delay: 100ms;">
+                    <h3 class="font-heading text-2xl font-bold mb-2 text-zinc-300">Thử thách Viral</h3>
+                    <div class="text-4xl font-extrabold mb-6 font-heading">0đ <span
+                            class="text-base font-normal text-zinc-500">/ chia sẻ</span></div>
+                    <ul class="space-y-4 mb-8 flex-1 text-zinc-300">
+                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2"
+                                class="text-green-500 w-5 h-5 flex-shrink-0"></i> Chia sẻ cho 2 người bạn đăng ký</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2"
+                                class="text-green-500 w-5 h-5 flex-shrink-0"></i> Nhận vé học Zoom miễn phí</li>
+                        <li class="flex items-center gap-3"><i data-lucide="check-circle-2"
+                                class="text-green-500 w-5 h-5 flex-shrink-0"></i> Nhận bộ GAS Kit cơ bản</li>
+                        <li class="flex items-center gap-3 text-zinc-500 opacity-50"><i data-lucide="x-circle"
+                                class="w-5 h-5 flex-shrink-0"></i> Support 1-1</li>
                     </ul>
-                    <button class="btn btn-secondary w-full py-3 font-semibold rounded-xl"
+                    <button
+                        class="w-full py-4 rounded-xl font-bold glass hover:bg-white/10 transition-colors border border-white/10"
                         onclick="showModal('referral')">Bắt đầu thử thách</button>
                 </div>
 
                 <!-- Paid Option -->
-                <div
-                    class="pricing-card flex-1 glass p-8 rounded-3xl fire-border relative overflow-hidden flex flex-col scale-105 z-10">
-                    <div
-                        class="absolute top-4 right-4 bg-primary-coral text-white text-[10px] font-bold px-2 py-1 rounded shadow-[0_0_15px_rgba(255,107,74,0.5)] uppercase tracking-widest badge-pulse">
-                        Phổ biến nhất</div>
-                    <h3 class="text-xl font-bold mb-2">Sở hữu ngay</h3>
-                    <div class="text-4xl font-bold mb-6">3.000.000đ <span class="text-sm font-normal text-muted">/ trọn
-                            gói</span></div>
-                    <ul class="space-y-4 mb-8 flex-1">
-                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
-                                class="text-primary-coral w-4 h-4"></i> Link Zoom học trực tiếp</li>
-                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
-                                class="text-primary-coral w-4 h-4"></i> <b>Full GAS Kit</b> (Video + Skill Library)</li>
-                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
-                                class="text-primary-coral w-4 h-4"></i> Support 1-1 hỗ trợ triển khai</li>
-                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
-                                class="text-primary-coral w-4 h-4"></i> Quyền truy cập cộng đồng AI Funnel</li>
-                    </ul>
-                    <button
-                        class="btn auth-btn w-full py-3 font-semibold bg-gradient-to-r from-primary-coral to-orange-400 text-white"
-                        onclick="showModal('paid')">Mua
-                        khóa học</button>
+                <div class="w-full lg:w-1/2 fire-border-wrapper lg:scale-105 z-10 shadow-2xl opacity-0 translate-y-5 transition-all duration-700"
+                    style="transition-delay: 300ms;">
+                    <div class="fire-border-content p-8 flex flex-col relative">
+                        <div
+                            class="absolute top-0 right-6 -translate-y-1/2 bg-gradient-to-r from-brand-red to-brand-orange text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg uppercase tracking-wider flex items-center gap-1">
+                            <i data-lucide="star" class="w-3 h-3 fill-current"></i> Phổ biến nhất
+                        </div>
+                        <h3 class="font-heading text-2xl font-bold mb-2 text-white">Sở hữu ngay</h3>
+                        <div
+                            class="text-4xl font-extrabold mb-6 font-heading text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400">
+                            3.000.000đ <span class="text-base font-normal text-zinc-500">/ trọn gói</span></div>
+                        <ul class="space-y-4 mb-8 flex-1 text-zinc-300">
+                            <li class="flex items-center gap-3"><i data-lucide="zap"
+                                    class="text-brand-red w-5 h-5 flex-shrink-0"></i> Link Zoom học trực tiếp</li>
+                            <li class="flex items-center gap-3"><i data-lucide="zap"
+                                    class="text-brand-red w-5 h-5 flex-shrink-0"></i> <b>Full GAS Kit</b> (Video + Skill
+                                Library)</li>
+                            <li class="flex items-center gap-3"><i data-lucide="zap"
+                                    class="text-brand-red w-5 h-5 flex-shrink-0"></i> Support 1-1 hỗ trợ triển khai</li>
+                            <li class="flex items-center gap-3"><i data-lucide="zap"
+                                    class="text-brand-red w-5 h-5 flex-shrink-0"></i> Quyền truy cập cộng đồng AI Funnel
+                            </li>
+                        </ul>
+                        <button
+                            class="w-full py-4 rounded-xl font-bold bg-white text-black hover:bg-zinc-200 transition-colors shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                            onclick="showModal('paid')">Mua khóa học ngay</button>
+                    </div>
                 </div>
+
             </div>
         </div>
     </section>
 
     <!-- Modal Form -->
     <div id="registerModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal()"></div>
-        <div class="modal-content glass w-full max-w-md p-8 rounded-3xl relative z-10 border border-white/20">
-            <button class="absolute top-4 right-4 text-zinc-500 hover:text-white" onclick="closeModal()">
-                <i data-lucide="x"></i>
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-md transition-opacity" onclick="closeModal()"></div>
+        <div class="glass w-full max-w-md p-8 rounded-3xl relative z-10 border border-white/20 shadow-2xl transform transition-transform scale-95 opacity-0"
+            id="modalContent">
+            <button
+                class="absolute top-5 right-5 text-zinc-500 hover:text-white transition-colors bg-white/5 p-2 rounded-full"
+                onclick="closeModal()">
+                <i data-lucide="x" class="w-4 h-4"></i>
             </button>
-            <h3 id="modalTitle" class="text-2xl font-bold mb-6">Phiếu đăng ký học</h3>
+            <h3 id="modalTitle" class="font-heading text-2xl font-bold mb-6 tracking-tight">Phiếu đăng ký học</h3>
 
             <!-- Step 1: Info -->
             <form id="regForm" class="space-y-4">
                 <input type="hidden" id="regType">
                 <div>
-                    <label for="regName" class="block text-xs font-semibold text-zinc-500 mb-1 ml-1 uppercase">Họ và
+                    <label for="regName"
+                        class="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Họ và
                         tên</label>
                     <input id="regName" type="text" name="name" required
-                        class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:outline-none focus:border-primary-coral transition-all"
+                        class="w-full bg-black/40 border border-white/10 p-3.5 rounded-xl text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-red/50 focus:border-transparent transition-all"
                         placeholder="Nguyễn Văn A">
                 </div>
                 <div>
-                    <label for="regEmail" class="block text-xs font-semibold text-zinc-500 mb-1 ml-1 uppercase">Email
-                        nhận tài
+                    <label for="regEmail"
+                        class="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Email nhận tài
                         liệu</label>
                     <input id="regEmail" type="email" name="email" required
-                        class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:outline-none focus:border-primary-coral transition-all"
+                        class="w-full bg-black/40 border border-white/10 p-3.5 rounded-xl text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-red/50 focus:border-transparent transition-all"
                         placeholder="name@email.com">
                 </div>
                 <div>
-                    <label for="regPhone" class="block text-xs font-semibold text-zinc-500 mb-1 ml-1 uppercase">Số điện
+                    <label for="regPhone"
+                        class="block text-xs font-semibold text-zinc-400 mb-1.5 uppercase tracking-wider">Số điện
                         thoại</label>
                     <input id="regPhone" type="tel" name="phone" required
-                        class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:outline-none focus:border-primary-coral transition-all"
+                        class="w-full bg-black/40 border border-white/10 p-3.5 rounded-xl text-white placeholder-zinc-600 focus:outline-none focus:ring-2 focus:ring-brand-red/50 focus:border-transparent transition-all"
                         placeholder="0901234567">
                 </div>
                 <button type="submit"
-                    class="btn auth-btn w-full py-4 text-white font-semibold mt-4 bg-gradient-to-r from-primary-coral to-orange-400">Xác
-                    nhận đăng
-                    ký</button>
+                    class="w-full py-4 mt-2 bg-gradient-to-r from-brand-red to-brand-orange rounded-xl font-bold text-white shadow-lg hover:shadow-brand-red/30 transition-shadow">Xác
+                    nhận đăng ký</button>
             </form>
 
-            <!-- Step 2: Payment/Referral (Hidden by default) -->
+            <!-- Step 2: Payment (Hidden) -->
             <div id="stepPayment" class="hidden text-center space-y-6">
-                <div class="icon-box glass inline-flex mb-2"><i data-lucide="qr-code"></i></div>
-                <p class="text-sm">Quét mã QR dưới đây để hoàn tất thanh toán <br>Hệ thống sẽ tự động kích hoạt sau khi
-                    nhận tiền.</p>
-                <div class="mx-auto w-48 h-48 bg-white p-2 rounded-xl">
+                <div class="w-16 h-16 rounded-2xl bg-white/10 mx-auto flex items-center justify-center text-white mb-2">
+                    <i data-lucide="qr-code" class="w-8 h-8"></i></div>
+                <p class="text-sm text-zinc-300">Quét mã QR dưới đây để hoàn tất thanh toán.<br>Hệ thống tự động kích
+                    hoạt sau khi nhận tiền.</p>
+                <div class="mx-auto w-52 h-52 bg-white p-3 rounded-2xl shadow-xl">
                     <img id="qrImage" src="" alt="SePay QR Code" class="w-full h-full object-contain">
                 </div>
-                <div class="bg-primary-coral/10 border border-primary-coral/20 p-4 rounded-xl text-left">
-                    <div class="text-[10px] uppercase font-bold text-primary-coral mb-1">Cần thanh toán</div>
-                    <div class="text-xl font-bold">3.000.000đ</div>
-                    <div class="text-[10px] uppercase font-bold text-zinc-500 mt-2">Nội dung chuyển khoản</div>
-                    <div id="paymentContent" class="font-mono text-sm select-all text-white">AIFUNNEL ...</div>
+                <div class="bg-brand-red/10 border border-brand-red/20 p-5 rounded-2xl text-left">
+                    <div class="text-[11px] uppercase font-bold text-brand-red mb-1">Cần thanh toán</div>
+                    <div class="text-2xl font-bold text-white font-heading">3.000.000đ</div>
+                    <div class="text-[11px] uppercase font-bold text-zinc-500 mt-4 mb-1">Nội dung chuyển khoản</div>
+                    <div id="paymentContent"
+                        class="font-mono text-base bg-black/30 p-2 rounded-lg text-white select-all text-center tracking-wider border border-white/5">
+                        AIFUNNEL ...</div>
                 </div>
             </div>
 
-            <!-- Step 2: Referral Success (Hidden by default) -->
+            <!-- Step 2: Referral (Hidden) -->
             <div id="stepReferral" class="hidden text-center space-y-6">
-                <div class="icon-box glass inline-flex mb-2"><i data-lucide="share-2"></i></div>
-                <h4 class="font-bold">Đăng ký thử thách thành công!</h4>
-                <p class="text-sm text-muted">Hãy copy link dưới đây và gửi cho ít nhất 2 người bạn. Khi họ đăng ký
-                    thành công, bạn sẽ nhận được Email vé học Miễn phí.</p>
-                <div class="flex items-center bg-white/5 border border-white/10 p-2 rounded-xl">
+                <div
+                    class="w-16 h-16 rounded-2xl bg-purple-500/20 mx-auto flex items-center justify-center text-purple-400 mb-2 border border-purple-500/30">
+                    <i data-lucide="share-2" class="w-8 h-8"></i></div>
+                <h4 class="font-heading text-xl font-bold text-white">Đăng ký thành công!</h4>
+                <p class="text-sm text-zinc-400">Hãy copy link dưới đây và gửi cho ít nhất 2 người bạn. Bạn sẽ nhận được
+                    Email vé Miễn phí khi họ đăng ký.</p>
+                <div class="flex items-center bg-black/40 border border-white/10 p-1.5 rounded-xl">
                     <input id="refLink" readonly
-                        class="bg-transparent border-none flex-1 text-xs px-2 focus:outline-none"
-                        placeholder="Link giới thiệu của bạn" title="Referral Link">
+                        class="bg-transparent border-none flex-1 text-sm px-3 text-white focus:outline-none"
+                        placeholder="Link giới thiệu">
                     <button
-                        class="btn auth-btn px-3 py-2 text-xs font-semibold text-white bg-gradient-to-r from-primary-coral to-orange-400 rounded-lg"
-                        onclick="copyRef()" title="Copy referral link">Copy</button>
+                        class="bg-white text-black px-4 py-2.5 rounded-lg text-sm font-bold hover:bg-zinc-200 transition-colors"
+                        onclick="copyRef()">Copy Link</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="py-12 border-t border-white/5">
-        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="logo font-bold text-lg tracking-tighter flex items-center gap-2">
-                <i data-lucide="zap" class="text-primary-coral w-5 h-5"></i>
-                <span class="text-white">Ai<span class="text-primary-coral">Funnel</span></span>
+    <footer class="py-12 border-t border-white/5 bg-black/20 relative z-10">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="font-heading font-bold text-xl tracking-tighter flex items-center gap-2">
+                <i data-lucide="zap" class="text-brand-red w-5 h-5"></i>
+                <span>Ai<span class="text-brand-red">Funnel</span></span>
             </div>
-            <div class="text-muted text-xs">
-                © 2026 Ai Funnel Course. Powered by Antigravity & Google Apps Script.
+            <div class="text-zinc-500 text-sm">
+                © 2026 Ai Funnel Course. Code with ❤️ bằng Antigravity.
             </div>
             <div class="flex gap-4">
-                <a href="#" class="text-zinc-500 hover:text-white" title="Follow us on Facebook"><i
-                        data-lucide="facebook"></i></a>
-                <a href="#" class="text-zinc-500 hover:text-white" title="Subscribe to our YouTube channel"><i
-                        data-lucide="youtube"></i></a>
+                <a href="#"
+                    class="w-10 h-10 rounded-full glass flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all"><i
+                        data-lucide="facebook" class="w-4 h-4"></i></a>
+                <a href="#"
+                    class="w-10 h-10 rounded-full glass flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all"><i
+                        data-lucide="youtube" class="w-4 h-4"></i></a>
             </div>
         </div>
     </footer>
 
     <!-- Scripts -->
-    <script src="app.js"></script>
     <script>
         // Initialize Icons
         lucide.createIcons();
+
+        // Reveal Animations on Scroll
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('appear');
+                        entry.target.classList.remove('opacity-0', 'translate-y-5');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('section > div, .spotlight-card, .fire-border-wrapper').forEach(el => {
+                if (!el.classList.contains('opacity-0')) {
+                    el.classList.add('opacity-0', 'translate-y-5', 'transition-all', 'duration-700', 'ease-out');
+                }
+                observer.observe(el);
+            });
+        });
+
+        // Spotlight Effect Math
+        document.querySelectorAll('.spotlight-card').forEach(card => {
+            card.addEventListener('mousemove', e => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--mouse-x', `${x}px`);
+                card.style.setProperty('--mouse-y', `${y}px`);
+            });
+        });
+
+        // App Logic (Modal & API)
+        const API_URL = "https://script.google.com/macros/s/AKfycbw6vr_ZXhSuwkKubA7Xq5s9HJsTyEch2MKrqHWFyCEs9HV-N2o88IMoWAdHHO966cGW5Q/exec";
+        const modal = document.getElementById('registerModal');
+        const modalContent = document.getElementById('modalContent');
+        const regForm = document.getElementById('regForm');
+        const stepPayment = document.getElementById('stepPayment');
+        const stepReferral = document.getElementById('stepReferral');
+        const modalTitle = document.getElementById('modalTitle');
+
+        function showModal(type) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // Animate in
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            document.getElementById('regType').value = type;
+            modalTitle.innerText = type === 'referral' ? "Tham gia Thử Thách Viral" : "Đăng ký Khóa Học (Paid)";
+        }
+
+        function closeModal() {
+            // Animate out
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                regForm.classList.remove('hidden');
+                stepPayment.classList.add('hidden');
+                stepReferral.classList.add('hidden');
+                regForm.reset();
+            }, 300); // Wait for transition
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const referrer = urlParams.get('ref') || "";
+
+        regForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = regForm.querySelector('button');
+            const originalText = btn.innerText;
+
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i>`;
+            lucide.createIcons();
+
+            const formData = new FormData(regForm);
+            const data = {
+                action: 'register',
+                name: formData.get('name'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                referredBy: referrer,
+                type: document.getElementById('regType').value
+            };
+
+            try {
+                // Keep original fetch logic
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(data)
+                });
+
+                const type = document.getElementById('regType').value;
+                if (type === 'paid') {
+                    const paymentCode = `AIFUNNEL${data.phone.slice(-4)}${Date.now().toString().slice(-3)}`;
+                    showPaymentStep(paymentCode);
+                } else {
+                    const myRefCode = data.email.split('@')[0].toUpperCase().substring(0, 6);
+                    showReferralStep(myRefCode);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Có lỗi xảy ra. Vui lòng thử lại.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        });
+
+        function showPaymentStep(paymentCode) {
+            regForm.classList.add('hidden');
+            stepPayment.classList.remove('hidden');
+            modalTitle.innerText = "Thanh toán Khóa học";
+            document.getElementById('paymentContent').innerText = paymentCode;
+
+            // Generate SePay/VietQR (Demo values maintained)
+            const bankId = "MB";
+            const accountNo = "YOUR_ACCOUNT_HERE";
+            const qrUrl = `https://img.vietqr.io/image/${bankId}-${accountNo}-compact.png?amount=3000000&addInfo=${paymentCode}`;
+            document.getElementById('qrImage').src = qrUrl;
+        }
+
+        function showReferralStep(refCode) {
+            regForm.classList.add('hidden');
+            stepReferral.classList.remove('hidden');
+            modalTitle.innerText = "Nhận Vé Miễn Phí";
+            const baseUrl = window.location.origin + window.location.pathname;
+            document.getElementById('refLink').value = `${baseUrl}?ref=${refCode}`;
+        }
+
+        function copyRef() {
+            const copyText = document.getElementById("refLink");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = "Đã Copy!";
+            btn.classList.add("bg-green-500", "text-white");
+            btn.classList.remove("text-black");
+
+            setTimeout(() => {
+                btn.innerText = originalText;
+                btn.classList.remove("bg-green-500", "text-white");
+                btn.classList.add("text-black");
+            }, 2000);
+        }
     </script>
 </body>
 
