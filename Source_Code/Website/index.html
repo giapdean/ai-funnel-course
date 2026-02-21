@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khóa Học Xây Dựng Ai Funnel | Antigravity & GAS</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Tự tay xây dựng hệ thống AI Marketing Funnel tự động với Google Apps Script và Antigravity. Dành cho Marketer & Quản lý.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="bg-black text-main">
+    <!-- Orbital Background -->
+    <div class="orbit-container">
+        <div class="orbit-circle orbit-1"></div>
+        <div class="orbit-circle orbit-2"></div>
+        <div class="orbit-circle orbit-3"></div>
+    </div>
+
+    <!-- Sticky Navbar -->
+    <nav class="navbar glass sticky top-0 z-50">
+        <div class="container mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="logo font-bold text-xl tracking-tighter flex items-center gap-2">
+                <i data-lucide="zap" class="text-primary-red"></i>
+                <span>Ai<span class="text-primary-red">Funnel</span></span>
+            </div>
+            <div class="hidden md:flex gap-8 text-sm font-medium">
+                <a href="#features" class="hover:text-white transition-colors">Tính năng</a>
+                <a href="#showcase" class="hover:text-white transition-colors">Showcase</a>
+                <a href="#pricing" class="hover:text-white transition-colors">Học phí</a>
+            </div>
+            <a href="#pricing" class="btn btn-primary text-sm px-5 py-2 rounded-full font-semibold">Đăng ký ngay</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section relative pt-20 pb-32 overflow-hidden">
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <div class="badge-capsule inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-6">
+                <span class="pulse-dot"></span>
+                Khóa học đặc biệt dành cho Marketer & Manager
+            </div>
+            <h1 class="hero-title text-5xl md:text-7xl font-extrabold leading-tight mb-6">
+                Xây Dựng <span class="gradient-text">AI Funnel</span><br>Tự Động 100%
+            </h1>
+            <p class="text-muted text-lg md:text-xl max-w-2xl mx-auto mb-10">
+                Ứng dụng Antigravity và Google Apps Script để tạo Landing Page, Game Viral và đo lường chiến dịch chỉ
+                với một người.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="#pricing"
+                    class="btn btn-primary px-8 py-4 rounded-xl font-bold flex items-center gap-2 justify-center">
+                    Bắt đầu ngay <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </a>
+                <a href="#features"
+                    class="btn btn-secondary px-8 py-4 rounded-xl font-bold glass flex items-center gap-2 justify-center">
+                    Xem chương trình học
+                </a>
+            </div>
+
+            <!-- Command Bar Mockup -->
+            <div
+                class="command-bar-wrapper mt-16 max-w-3xl mx-auto glass p-2 rounded-2xl shadow-2xl border border-white/10">
+                <div class="flex items-center gap-3 px-4 py-3 bg-black/40 rounded-xl">
+                    <i data-lucide="terminal" class="w-5 h-5 text-zinc-500"></i>
+                    <div class="typing-text text-left font-mono text-sm text-zinc-400">antigravity create landing-page
+                        --viral-loop --tracking</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Logo Ticker -->
+    <div class="logo-ticker py-12 border-y border-white/5 bg-black/50">
+        <div class="ticker-content flex gap-20 items-center overflow-hidden">
+            <div class="ticker-track flex gap-20 items-center">
+                <span class="ticker-item"><i data-lucide="command"></i> Antigravity</span>
+                <span class="ticker-item"><i data-lucide="database"></i> Google Sheets</span>
+                <span class="ticker-item"><i data-lucide="mail"></i> Gmail API</span>
+                <span class="ticker-item"><i data-lucide="layout"></i> App Script</span>
+                <span class="ticker-item"><i data-lucide="activity"></i> SePay</span>
+                <!-- Duplicate for seamless scroll -->
+                <span class="ticker-item"><i data-lucide="command"></i> Antigravity</span>
+                <span class="ticker-item"><i data-lucide="database"></i> Google Sheets</span>
+                <span class="ticker-item"><i data-lucide="mail"></i> Gmail API</span>
+                <span class="ticker-item"><i data-lucide="layout"></i> App Script</span>
+                <span class="ticker-item"><i data-lucide="activity"></i> SePay</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section (Bento Grid) -->
+    <section id="features" class="py-24 bg-dark">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">Mọi thứ bạn cần để <span class="text-primary-red">Làm
+                        Chủ</span></h2>
+                <p class="text-muted text-lg">Từ ý tưởng đến thực thi, không cần rành code.</p>
+            </div>
+
+            <div class="bento-grid">
+                <div class="bento-item bento-large glass p-8 rounded-3xl group">
+                    <div class="icon-box glass mb-6"><i data-lucide="rocket"></i></div>
+                    <h3 class="text-2xl font-bold mb-3">Tự tay tạo Landing Page</h3>
+                    <p class="text-muted">Học cách sử dụng Antigravity để code Landing Page chuẩn SEO, mượt mà chỉ trong
+                        vài phút.</p>
+                    <div
+                        class="bento-visual mt-8 h-48 bg-gradient-to-br from-primary-red/20 to-orange-500/20 rounded-2xl border border-white/5">
+                    </div>
+                </div>
+                <div class="bento-item bento-tall glass p-8 rounded-3xl group">
+                    <div class="icon-box glass mb-6"><i data-lucide="share-2"></i></div>
+                    <h3 class="text-2xl font-bold mb-3">Viral Loop Marketing</h3>
+                    <p class="text-muted">Thiết lập chương trình Share nhận quà tự động. Mỗi học viên giới thiệu 2 người
+                        sẽ được học Free.</p>
+                </div>
+                <div class="bento-item bento-medium glass p-8 rounded-3xl group">
+                    <div class="icon-box glass mb-6"><i data-lucide="credit-card"></i></div>
+                    <h3 class="text-2xl font-bold mb-3">Thanh toán tự động</h3>
+                    <p class="text-muted">Tích hợp SePay QR Code để xác nhận học viên ngay lập tức khi tiền về tài
+                        khoản.</p>
+                </div>
+                <div class="bento-item bento-medium glass p-8 rounded-3xl group">
+                    <div class="icon-box glass mb-6"><i data-lucide="bar-chart-3"></i></div>
+                    <h3 class="text-2xl font-bold mb-3">Đo lường thời gian thực</h3>
+                    <p class="text-muted">Toàn bộ dữ liệu tự động đổ về Google Sheets. Quản lý chiến dịch ngay trên điện
+                        thoại.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold mb-4">Chọn lộ trình của bạn</h2>
+                <p class="text-muted">Đăng ký mua thẳng hoặc tham gia thử thách chia sẻ để nhận vé Free.</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-8 max-w-5xl mx-auto items-stretch">
+                <!-- Free Option -->
+                <div class="pricing-card flex-1 glass p-8 rounded-3xl border border-white/10 flex flex-col">
+                    <h3 class="text-xl font-bold mb-2">Thử thách Viral</h3>
+                    <div class="text-4xl font-bold mb-6">0đ <span class="text-sm font-normal text-muted">/ chia
+                            sẻ</span></div>
+                    <ul class="space-y-4 mb-8 flex-1">
+                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
+                                class="text-green-500 w-4 h-4"></i> Chia sẻ cho 2 người bạn đăng ký</li>
+                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
+                                class="text-green-500 w-4 h-4"></i> Nhận vé học Zoom miễn phí</li>
+                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
+                                class="text-green-500 w-4 h-4"></i> Nhận bộ GAS Kit cơ bản</li>
+                    </ul>
+                    <button class="btn btn-secondary w-full py-3 rounded-xl font-bold"
+                        onclick="showModal('referral')">Bắt đầu thử thách</button>
+                </div>
+
+                <!-- Paid Option -->
+                <div
+                    class="pricing-card flex-1 glass p-8 rounded-3xl fire-border relative overflow-hidden flex flex-col scale-105 z-10">
+                    <div
+                        class="absolute top-4 right-4 bg-primary-red text-[10px] font-bold px-2 py-1 rounded shadow-lg uppercase tracking-widest badge-pulse">
+                        Phổ biến nhất</div>
+                    <h3 class="text-xl font-bold mb-2">Sở hữu ngay</h3>
+                    <div class="text-4xl font-bold mb-6">3.000.000đ <span class="text-sm font-normal text-muted">/ trọn
+                            gói</span></div>
+                    <ul class="space-y-4 mb-8 flex-1">
+                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
+                                class="text-primary-red w-4 h-4"></i> Link Zoom học trực tiếp</li>
+                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
+                                class="text-primary-red w-4 h-4"></i> <b>Full GAS Kit</b> (Video + Skill Library)</li>
+                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
+                                class="text-primary-red w-4 h-4"></i> Support 1-1 hỗ trợ triển khai</li>
+                        <li class="flex items-center gap-3 text-sm"><i data-lucide="check"
+                                class="text-primary-red w-4 h-4"></i> Quyền truy cập cộng đồng AI Funnel</li>
+                    </ul>
+                    <button class="btn btn-primary w-full py-3 rounded-xl font-bold" onclick="showModal('paid')">Mua
+                        khóa học</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Form -->
+    <div id="registerModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="modal-content glass w-full max-w-md p-8 rounded-3xl relative z-10 border border-white/20">
+            <button class="absolute top-4 right-4 text-zinc-500 hover:text-white" onclick="closeModal()">
+                <i data-lucide="x"></i>
+            </button>
+            <h3 id="modalTitle" class="text-2xl font-bold mb-6">Phiếu đăng ký học</h3>
+
+            <!-- Step 1: Info -->
+            <form id="regForm" class="space-y-4">
+                <input type="hidden" id="regType">
+                <div>
+                    <label for="regName" class="block text-xs font-semibold text-zinc-500 mb-1 ml-1 uppercase">Họ và
+                        tên</label>
+                    <input id="regName" type="text" name="name" required
+                        class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:outline-none focus:border-primary-red transition-all"
+                        placeholder="Nguyễn Văn A">
+                </div>
+                <div>
+                    <label for="regEmail" class="block text-xs font-semibold text-zinc-500 mb-1 ml-1 uppercase">Email
+                        nhận tài
+                        liệu</label>
+                    <input id="regEmail" type="email" name="email" required
+                        class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:outline-none focus:border-primary-red transition-all"
+                        placeholder="name@email.com">
+                </div>
+                <div>
+                    <label for="regPhone" class="block text-xs font-semibold text-zinc-500 mb-1 ml-1 uppercase">Số điện
+                        thoại</label>
+                    <input id="regPhone" type="tel" name="phone" required
+                        class="w-full bg-white/5 border border-white/10 p-3 rounded-xl focus:outline-none focus:border-primary-red transition-all"
+                        placeholder="0901234567">
+                </div>
+                <button type="submit" class="btn btn-primary w-full py-4 rounded-xl font-bold mt-4">Xác nhận đăng
+                    ký</button>
+            </form>
+
+            <!-- Step 2: Payment/Referral (Hidden by default) -->
+            <div id="stepPayment" class="hidden text-center space-y-6">
+                <div class="icon-box glass inline-flex mb-2"><i data-lucide="qr-code"></i></div>
+                <p class="text-sm">Quét mã QR dưới đây để hoàn tất thanh toán <br>Hệ thống sẽ tự động kích hoạt sau khi
+                    nhận tiền.</p>
+                <div class="mx-auto w-48 h-48 bg-white p-2 rounded-xl">
+                    <img id="qrImage" src="" alt="SePay QR Code" class="w-full h-full object-contain">
+                </div>
+                <div class="bg-primary-red/10 border border-primary-red/20 p-4 rounded-xl text-left">
+                    <div class="text-[10px] uppercase font-bold text-primary-red mb-1">Cần thanh toán</div>
+                    <div class="text-xl font-bold">3.000.000đ</div>
+                    <div class="text-[10px] uppercase font-bold text-zinc-500 mt-2">Nội dung chuyển khoản</div>
+                    <div id="paymentContent" class="font-mono text-sm select-all">AIFUNNEL ...</div>
+                </div>
+            </div>
+
+            <!-- Step 2: Referral Success (Hidden by default) -->
+            <div id="stepReferral" class="hidden text-center space-y-6">
+                <div class="icon-box glass inline-flex mb-2"><i data-lucide="share-2"></i></div>
+                <h4 class="font-bold">Đăng ký thử thách thành công!</h4>
+                <p class="text-sm text-muted">Hãy copy link dưới đây và gửi cho ít nhất 2 người bạn. Khi họ đăng ký
+                    thành công, bạn sẽ nhận được Email vé học Miễn phí.</p>
+                <div class="flex items-center bg-white/5 border border-white/10 p-2 rounded-xl">
+                    <input id="refLink" readonly
+                        class="bg-transparent border-none flex-1 text-xs px-2 focus:outline-none"
+                        placeholder="Link giới thiệu của bạn" title="Referral Link">
+                    <button class="btn btn-primary px-3 py-2 rounded-lg text-xs" onclick="copyRef()"
+                        title="Copy referral link">Copy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="logo font-bold text-lg tracking-tighter flex items-center gap-2">
+                <i data-lucide="zap" class="text-primary-red w-5 h-5"></i>
+                <span>Ai<span class="text-primary-red">Funnel</span></span>
+            </div>
+            <div class="text-muted text-xs">
+                © 2026 Ai Funnel Course. Powered by Antigravity & Google Apps Script.
+            </div>
+            <div class="flex gap-4">
+                <a href="#" class="text-zinc-500 hover:text-white" title="Follow us on Facebook"><i
+                        data-lucide="facebook"></i></a>
+                <a href="#" class="text-zinc-500 hover:text-white" title="Subscribe to our YouTube channel"><i
+                        data-lucide="youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script>
+        // Initialize Icons
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>

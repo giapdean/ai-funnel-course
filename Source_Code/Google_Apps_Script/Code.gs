@@ -48,13 +48,17 @@ function getSheet(sheetName) {
   return ss.getSheetByName(sheetName);
 }
 
-function generateRefCode() {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let code = "";
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
+function generateRefCode(email) {
+  if (!email) {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let code = "";
+    for (let i = 0; i < 6; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
   }
-  return code;
+  // Đồng bộ với app.js: Lấy prefix email, tối đa 6 ký tự, viết hoa
+  return email.split('@')[0].toUpperCase().substring(0, 6).replace(/[^A-Z0-9]/g, "X");
 }
 
 function generatePaymentCode(email) {
@@ -101,7 +105,7 @@ function handleRegister(data) {
   const referredBy = (data.referredBy || "").trim().toUpperCase();
 
   // Tạo RefCode và PaymentCode
-  const refCode = generateRefCode();
+  const refCode = generateRefCode(email);
   const paymentCode = generatePaymentCode(email);
   const id = Utilities.getUuid();
   const timestamp = new Date();

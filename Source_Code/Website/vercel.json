@@ -1,0 +1,9 @@
+{
+    "name": "ai-funnel-course",
+    "version": 2,
+    "cleanUrls": true,
+    "framework": null,
+    "installCommand": null,
+    "buildCommand": null,
+    "devCommand": null
+}
