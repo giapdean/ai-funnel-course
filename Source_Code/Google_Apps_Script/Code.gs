@@ -169,7 +169,7 @@ function sendOtpEmail(toEmail, otp) {
     + '</div>'
     + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Lưu ý: Mã này có hiệu lực trong vòng 10 phút. Tuyệt đối không chia sẻ mã này cho bất kỳ ai.</p>';
 
-  var html = getEmailTemplate("Xác thực Email 🔒", contentHtml, "", "");
+  var html = getEmailTemplate("Xác thực Email \uD83D\uDD12", contentHtml, "", "");
 
   try {
     GmailApp.sendEmail(toEmail, subject, "Mã OTP của bạn là: " + otp, { htmlBody: html });
@@ -478,21 +478,21 @@ function handleVerifyFbShare(data) {
  * Gửi email thông báo nhận GAS Kit — HTML Premium
  */
 function sendGasKitEmail(toEmail, name) {
-  var subject = "🎁 Chúc mừng — Bạn đã nhận được GAS Kit Standard Miễn Phí!";
+  var subject = "\uD83C\uDF81 Chúc mừng — Bạn đã nhận được GAS Kit Standard Miễn Phí!";
 
   var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">'
-    + 'Chúc mừng! 🎉 Bạn đã hoàn thành thử thách và nhận được <strong style="color:#ff3366;">GAS Kit Standard</strong> miễn phí!</p>'
+    + 'Chúc mừng! \uD83C\uDF89 Bạn đã hoàn thành thử thách và nhận được <strong style="color:#ff3366;">GAS Kit Standard</strong> miễn phí!</p>'
     // Info Card
     + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
     + '<tr><td style="padding:20px 24px;">'
     + '<table width="100%" cellpadding="0" cellspacing="0">'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:40%;">📦 Bộ Kit</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:40%;">\uD83D\uDCE6 Bộ Kit</td>'
     + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">GAS Kit Standard</td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">📂 Truy cập</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\uD83D\uDCC2 Truy cập</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:600;">'
     + '<a href="' + CONFIG.GAS_KIT_FOLDER_URL + '" style="color:#ff3366;text-decoration:underline;">Mở Google Drive</a></td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">✅ Trạng thái</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\u2705 Trạng thái</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:700;">'
     + '<span style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">ĐÃ CẤP QUYỀN</span>'
     + '</td></tr>'
@@ -501,13 +501,13 @@ function sendGasKitEmail(toEmail, name) {
     + 'Chúng tôi đã cấp quyền xem cho email <strong>' + toEmail + '</strong>. Bấm nút bên dưới để truy cập ngay!</p>'
     + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Lưu ý: Bạn cần đăng nhập bằng đúng email này trên Google Drive.</p>';
 
-  var html = getEmailTemplate("Bạn đã nhận GAS Kit! 🎁", contentHtml, "Truy cập GAS Kit ngay", CONFIG.GAS_KIT_FOLDER_URL);
+  var html = getEmailTemplate("Bạn đã nhận GAS Kit! \uD83C\uDF81", contentHtml, "Truy cập GAS Kit ngay", CONFIG.GAS_KIT_FOLDER_URL);
 
   try {
     GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
-    Logger.log("📧 GAS Kit email gửi tới: " + toEmail);
+    Logger.log("\uD83D\uDCE7 GAS Kit email gửi tới: " + toEmail);
   } catch (err) {
-    Logger.log("⚠️ Lỗi gửi GAS Kit email: " + err.message);
+    Logger.log("\u26A0\uFE0F Lỗi gửi GAS Kit email: " + err.message);
   }
 }
 
@@ -550,10 +550,10 @@ function getEmailTemplate(title, contentHtml, ctaText, ctaUrl) {
 function sendCourseEmail(toEmail, name, type) {
   var isPaid = (type === "paid");
   var subject = isPaid
-    ? "🎉 Xác nhận Đăng ký — Khóa Học Xây Dựng Ai Funnel"
-    : "🎁 Chúc mừng — Bạn nhận được Vé Miễn Phí!";
+    ? "\uD83C\uDF89 Xác nhận Đăng ký — Khóa Học Xây Dựng Ai Funnel"
+    : "\uD83C\uDF81 Chúc mừng — Bạn nhận được Vé Miễn Phí!";
 
-  var title = isPaid ? "Đăng ký thành công! 🎉" : "Bạn đã nhận Vé Miễn Phí! 🎁";
+  var title = isPaid ? "Đăng ký thành công! \uD83C\uDF89" : "Bạn đã nhận Vé Miễn Phí! \uD83C\uDF81";
   var greeting = isPaid
     ? "Cảm ơn bạn đã đăng ký <strong>Khóa Học Xây Dựng Ai Funnel</strong>!"
     : "Chúc mừng! Bạn đã đủ điều kiện nhận <strong>Vé Miễn Phí</strong> nhờ chương trình giới thiệu!";
@@ -567,17 +567,17 @@ function sendCourseEmail(toEmail, name, type) {
     + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
     + '<tr><td style="padding:20px 24px;">'
     + '<table width="100%" cellpadding="0" cellspacing="0">'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:35%;">📅 Thời gian</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:35%;">\uD83D\uDCC5 Thời gian</td>'
     + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + CONFIG.COURSE_TIME + '</td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">🎥 Link Zoom</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\uD83C\uDFA5 Link Zoom</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:600;">'
     + '<a href="' + (CONFIG.ZOOM_LINK || "#") + '" style="color:#3b82f6;text-decoration:underline;word-break:break-all;">' + (CONFIG.ZOOM_LINK || "Sắp cập nhật") + '</a></td></tr>'
-    + (isPaid ? '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">🎁 GAS Kit</td>'
+    + (isPaid ? '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\uD83C\uDF81 GAS Kit</td>'
     + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.GAS_KIT_LINK || "Sắp cập nhật") + '</td></tr>' : '')
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">💬 Nhóm Zalo</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\uD83D\uDCAC Nhóm Zalo</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:600;">'
     + '<a href="' + CONFIG.ZALO_GROUP_LINK + '" style="color:#10b981;text-decoration:underline;">Tham gia ngay</a></td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">💳 Trạng thái</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\uD83D\uDCB3 Trạng thái</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:700;">'
     + '<span style="background:' + badgeBg + ';color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">' + badgeText + '</span>'
     + '</td></tr>'
@@ -585,7 +585,7 @@ function sendCourseEmail(toEmail, name, type) {
 
   if (!isPaid) {
     contentHtml += '<div style="margin-top:24px;background-color:rgba(234,179,8,0.1);border-left:4px solid #eab308;padding:16px;">'
-      + '<p style="margin:0;color:#fef08a;font-size:14px;font-weight:600;margin-bottom:8px;">⚠️ Lưu ý quan trọng khi vào Zoom:</p>'
+      + '<p style="margin:0;color:#fef08a;font-size:14px;font-weight:600;margin-bottom:8px;">\u26A0\uFE0F Lưu ý quan trọng khi vào Zoom:</p>'
       + '<p style="margin:0;color:#d4d4d8;font-size:14px;line-height:1.6;">Bạn bắt buộc phải <strong>Đổi tên theo cú pháp: Tên + SĐT đăng ký của bạn</strong>.<br>Ví dụ: <strong>Giáp - 0362675331</strong>. Ban tổ chức sẽ duyệt dựa trên danh sách đăng ký.</p>'
       + '</div>';
   } else {
@@ -596,9 +596,9 @@ function sendCourseEmail(toEmail, name, type) {
 
   try {
     GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
-    Logger.log("📧 Email HTML gửi thành công tới: " + toEmail);
+    Logger.log("\uD83D\uDCE7 Email HTML gửi thành công tới: " + toEmail);
   } catch (err) {
-    Logger.log("⚠️ Lỗi gửi email: " + err.message);
+    Logger.log("\u26A0\uFE0F Lỗi gửi email: " + err.message);
   }
 }
 
@@ -606,14 +606,14 @@ function sendCourseEmail(toEmail, name, type) {
  * Gửi email thông báo tiến độ referral (khi có 1 người đăng ký qua link)
  */
 function sendReferralProgressEmail(toEmail, name, currentCount, refCode) {
-  var subject = "🔥 Có người đăng ký qua link của bạn!";
+  var subject = "\uD83D\uDD25 Có người đăng ký qua link của bạn!";
   var remaining = 2 - currentCount;
   var siteUrl = "https://ai-funnel-course.vercel.app";
   var progressWidth = (currentCount * 50) + "%";
 
   var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">'
-    + 'Tin vui! 🎉 Có <strong style="color:#ff3366;">1 người</strong> vừa đăng ký khóa học qua link giới thiệu của bạn!</p>'
+    + 'Tin vui! \uD83C\uDF89 Có <strong style="color:#ff3366;">1 người</strong> vừa đăng ký khóa học qua link giới thiệu của bạn!</p>'
     // Progress Card
     + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
     + '<tr><td style="padding:24px;">'
@@ -628,17 +628,17 @@ function sendReferralProgressEmail(toEmail, name, currentCount, refCode) {
     + '<td style="text-align:right;color:#ff7733;font-size:14px;font-weight:600;">Còn ' + remaining + ' người nữa!</td></tr>'
     + '</table></td></tr></table>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:24px 0 8px;line-height:1.7;">'
-    + 'Chỉ cần mời thêm <strong style="color:#ff7733;">' + remaining + ' người</strong> nữa, bạn sẽ nhận ngay <strong style="color:#22c55e;">Vé Miễn Phí</strong> tham gia khóa học! 🚀</p>'
+    + 'Chỉ cần mời thêm <strong style="color:#ff7733;">' + remaining + ' người</strong> nữa, bạn sẽ nhận ngay <strong style="color:#22c55e;">Vé Miễn Phí</strong> tham gia khóa học! \uD83D\uDE80</p>'
     + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Chia sẻ link bên dưới cho bạn bè để hoàn thành thử thách nhé!</p>';
 
   var referralLink = siteUrl + "?ref=" + refCode;
-  var html = getEmailTemplate("Bạn có 1 Referral mới! 🔥", contentHtml, "Chia sẻ link ngay", referralLink);
+  var html = getEmailTemplate("Bạn có 1 Referral mới! \uD83D\uDD25", contentHtml, "Chia sẻ link ngay", referralLink);
 
   try {
     GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
-    Logger.log("📧 Referral progress email gửi tới: " + toEmail);
+    Logger.log("\uD83D\uDCE7 Referral progress email gửi tới: " + toEmail);
   } catch (err) {
-    Logger.log("⚠️ Lỗi gửi referral progress email: " + err.message);
+    Logger.log("\u26A0\uFE0F Lỗi gửi referral progress email: " + err.message);
   }
 }
 
