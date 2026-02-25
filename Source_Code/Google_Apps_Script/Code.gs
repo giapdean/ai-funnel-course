@@ -169,12 +169,12 @@ function sendOtpEmail(toEmail, otp) {
     + '</div>'
     + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Lưu ý: Mã này có hiệu lực trong vòng 10 phút. Tuyệt đối không chia sẻ mã này cho bất kỳ ai.</p>';
 
-  var html = getEmailTemplate("Xác thực Email \uD83D\uDD12", contentHtml, "", "");
+  var html = getEmailTemplate("X\u00e1c th\u1ef1c Email " + String.fromCodePoint(0x1F512), contentHtml, "", "");
 
   try {
-    GmailApp.sendEmail(toEmail, subject, "Mã OTP của bạn là: " + otp, { htmlBody: html });
+    GmailApp.sendEmail(toEmail, subject, "M\u00e3 OTP c\u1ee7a b\u1ea1n l\u00e0: " + otp, { htmlBody: html });
   } catch (err) {
-    Logger.log("⚠️ Lỗi gửi OTP email: " + err.message);
+    Logger.log("L\u1ed7i g\u1eedi OTP email: " + err.message);
   }
 }
 
@@ -478,36 +478,36 @@ function handleVerifyFbShare(data) {
  * Gửi email thông báo nhận GAS Kit — HTML Premium
  */
 function sendGasKitEmail(toEmail, name) {
-  var subject = "\uD83C\uDF81 Chúc mừng — Bạn đã nhận được GAS Kit Standard Miễn Phí!";
+  var subject = String.fromCodePoint(0x1F381) + " Ch\u00fac m\u1eebng \u2014 B\u1ea1n \u0111\u00e3 nh\u1eadn \u0111\u01b0\u1ee3c GAS Kit Standard Mi\u1ec5n Ph\u00ed!";
 
-  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
+  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin ch\u00e0o <strong>' + name + '</strong>,</p>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">'
-    + 'Chúc mừng! \uD83C\uDF89 Bạn đã hoàn thành thử thách và nhận được <strong style="color:#ff3366;">GAS Kit Standard</strong> miễn phí!</p>'
+    + 'Ch\u00fac m\u1eebng! &#x1F389; B\u1ea1n \u0111\u00e3 ho\u00e0n th\u00e0nh th\u1eed th\u00e1ch v\u00e0 nh\u1eadn \u0111\u01b0\u1ee3c <strong style="color:#ff3366;">GAS Kit Standard</strong> mi\u1ec5n ph\u00ed!</p>'
     // Info Card
     + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
     + '<tr><td style="padding:20px 24px;">'
     + '<table width="100%" cellpadding="0" cellspacing="0">'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:40%;">\uD83D\uDCE6 Bộ Kit</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:40%;">&#x1F4E6; B\u1ed9 Kit</td>'
     + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">GAS Kit Standard</td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\uD83D\uDCC2 Truy cập</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">&#x1F4C2; Truy c\u1eadp</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:600;">'
-    + '<a href="' + CONFIG.GAS_KIT_FOLDER_URL + '" style="color:#ff3366;text-decoration:underline;">Mở Google Drive</a></td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\u2705 Trạng thái</td>'
+    + '<a href="' + CONFIG.GAS_KIT_FOLDER_URL + '" style="color:#ff3366;text-decoration:underline;">M\u1edf Google Drive</a></td></tr>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">&#x2705; Tr\u1ea1ng th\u00e1i</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:700;">'
-    + '<span style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">ĐÃ CẤP QUYỀN</span>'
+    + '<span style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">\u0110\u00c3 C\u1ea4P QUY\u1ec0N</span>'
     + '</td></tr>'
     + '</table></td></tr></table>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:24px 0 8px;line-height:1.7;">'
-    + 'Chúng tôi đã cấp quyền xem cho email <strong>' + toEmail + '</strong>. Bấm nút bên dưới để truy cập ngay!</p>'
-    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Lưu ý: Bạn cần đăng nhập bằng đúng email này trên Google Drive.</p>';
+    + 'Ch\u00fang t\u00f4i \u0111\u00e3 c\u1ea5p quy\u1ec1n xem cho email <strong>' + toEmail + '</strong>. B\u1ea5m n\u00fat b\u00ean d\u01b0\u1edbi \u0111\u1ec3 truy c\u1eadp ngay!</p>'
+    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">L\u01b0u \u00fd: B\u1ea1n c\u1ea7n \u0111\u0103ng nh\u1eadp b\u1eb1ng \u0111\u00fang email n\u00e0y tr\u00ean Google Drive.</p>';
 
-  var html = getEmailTemplate("Bạn đã nhận GAS Kit! \uD83C\uDF81", contentHtml, "Truy cập GAS Kit ngay", CONFIG.GAS_KIT_FOLDER_URL);
+  var html = getEmailTemplate("B\u1ea1n \u0111\u00e3 nh\u1eadn GAS Kit! " + String.fromCodePoint(0x1F381), contentHtml, "Truy c\u1eadp GAS Kit ngay", CONFIG.GAS_KIT_FOLDER_URL);
 
   try {
-    GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
-    Logger.log("\uD83D\uDCE7 GAS Kit email gửi tới: " + toEmail);
+    GmailApp.sendEmail(toEmail, subject, "Vui l\u00f2ng xem email n\u00e0y tr\u00ean tr\u00ecnh duy\u1ec7t h\u1ed7 tr\u1ee3 HTML.", { htmlBody: html });
+    Logger.log("GAS Kit email g\u1eedi t\u1edbi: " + toEmail);
   } catch (err) {
-    Logger.log("\u26A0\uFE0F Lỗi gửi GAS Kit email: " + err.message);
+    Logger.log("L\u1ed7i g\u1eedi GAS Kit email: " + err.message);
   }
 }
 
@@ -550,34 +550,36 @@ function getEmailTemplate(title, contentHtml, ctaText, ctaUrl) {
 function sendCourseEmail(toEmail, name, type) {
   var isPaid = (type === "paid");
   var subject = isPaid
-    ? "\uD83C\uDF89 Xác nhận Đăng ký — Khóa Học Xây Dựng Ai Funnel"
-    : "\uD83C\uDF81 Chúc mừng — Bạn nhận được Vé Miễn Phí!";
+    ? String.fromCodePoint(0x1F389) + " X\u00e1c nh\u1eadn \u0110\u0103ng k\u00fd \u2014 Kh\u00f3a H\u1ecdc X\u00e2y D\u1ef1ng Ai Funnel"
+    : String.fromCodePoint(0x1F381) + " Ch\u00fac m\u1eebng \u2014 B\u1ea1n nh\u1eadn \u0111\u01b0\u1ee3c V\u00e9 Mi\u1ec5n Ph\u00ed!";
 
-  var title = isPaid ? "Đăng ký thành công! \uD83C\uDF89" : "Bạn đã nhận Vé Miễn Phí! \uD83C\uDF81";
+  var title = isPaid
+    ? "\u0110\u0103ng k\u00fd th\u00e0nh c\u00f4ng! " + String.fromCodePoint(0x1F389)
+    : "B\u1ea1n \u0111\u00e3 nh\u1eadn V\u00e9 Mi\u1ec5n Ph\u00ed! " + String.fromCodePoint(0x1F381);
   var greeting = isPaid
-    ? "Cảm ơn bạn đã đăng ký <strong>Khóa Học Xây Dựng Ai Funnel</strong>!"
-    : "Chúc mừng! Bạn đã đủ điều kiện nhận <strong>Vé Miễn Phí</strong> nhờ chương trình giới thiệu!";
+    ? "C\u1ea3m \u01a1n b\u1ea1n \u0111\u00e3 \u0111\u0103ng k\u00fd <strong>Kh\u00f3a H\u1ecdc X\u00e2y D\u1ef1ng Ai Funnel</strong>!"
+    : "Ch\u00fac m\u1eebng! B\u1ea1n \u0111\u00e3 \u0111\u1ee7 \u0111i\u1ec1u ki\u1ec7n nh\u1eadn <strong>V\u00e9 Mi\u1ec5n Ph\u00ed</strong> nh\u1edd ch\u01b0\u01a1ng tr\u00ecnh gi\u1edbi thi\u1ec7u!";
 
   var badgeBg = isPaid ? "linear-gradient(135deg,#ff3366,#ff7733)" : "linear-gradient(135deg,#22c55e,#16a34a)";
-  var badgeText = isPaid ? "ĐÃ THANH TOÁN" : "MIỄN PHÍ";
+  var badgeText = isPaid ? "\u0110\u00c3 THANH TO\u00c1N" : "MI\u1ec4N PH\u00cd";
 
-  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
+  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin ch\u00e0o <strong>' + name + '</strong>,</p>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">' + greeting + '</p>'
     // Info Card
     + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
     + '<tr><td style="padding:20px 24px;">'
     + '<table width="100%" cellpadding="0" cellspacing="0">'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:35%;">\uD83D\uDCC5 Thời gian</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:35%;">&#x1F4C5; Th\u1eddi gian</td>'
     + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + CONFIG.COURSE_TIME + '</td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\uD83C\uDFA5 Link Zoom</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">&#x1F3A5; Link Zoom</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:600;">'
-    + '<a href="' + (CONFIG.ZOOM_LINK || "#") + '" style="color:#3b82f6;text-decoration:underline;word-break:break-all;">' + (CONFIG.ZOOM_LINK || "Sắp cập nhật") + '</a></td></tr>'
-    + (isPaid ? '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\uD83C\uDF81 GAS Kit</td>'
-    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.GAS_KIT_LINK || "Sắp cập nhật") + '</td></tr>' : '')
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\uD83D\uDCAC Nhóm Zalo</td>'
+    + '<a href="' + (CONFIG.ZOOM_LINK || "#") + '" style="color:#3b82f6;text-decoration:underline;word-break:break-all;">' + (CONFIG.ZOOM_LINK || "S\u1eafp c\u1eadp nh\u1eadt") + '</a></td></tr>'
+    + (isPaid ? '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">&#x1F381; GAS Kit</td>'
+    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.GAS_KIT_LINK || "S\u1eafp c\u1eadp nh\u1eadt") + '</td></tr>' : '')
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">&#x1F4AC; Nh\u00f3m Zalo</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:600;">'
     + '<a href="' + CONFIG.ZALO_GROUP_LINK + '" style="color:#10b981;text-decoration:underline;">Tham gia ngay</a></td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">\uD83D\uDCB3 Trạng thái</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">&#x1F4B3; Tr\u1ea1ng th\u00e1i</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:700;">'
     + '<span style="background:' + badgeBg + ';color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">' + badgeText + '</span>'
     + '</td></tr>'
@@ -585,20 +587,20 @@ function sendCourseEmail(toEmail, name, type) {
 
   if (!isPaid) {
     contentHtml += '<div style="margin-top:24px;background-color:rgba(234,179,8,0.1);border-left:4px solid #eab308;padding:16px;">'
-      + '<p style="margin:0;color:#fef08a;font-size:14px;font-weight:600;margin-bottom:8px;">\u26A0\uFE0F Lưu ý quan trọng khi vào Zoom:</p>'
-      + '<p style="margin:0;color:#d4d4d8;font-size:14px;line-height:1.6;">Bạn bắt buộc phải <strong>Đổi tên theo cú pháp: Tên + SĐT đăng ký của bạn</strong>.<br>Ví dụ: <strong>Giáp - 0362675331</strong>. Ban tổ chức sẽ duyệt dựa trên danh sách đăng ký.</p>'
+      + '<p style="margin:0;color:#fef08a;font-size:14px;font-weight:600;margin-bottom:8px;">&#x26A0;&#xFE0F; L\u01b0u \u00fd quan tr\u1ecdng khi v\u00e0o Zoom:</p>'
+      + '<p style="margin:0;color:#d4d4d8;font-size:14px;line-height:1.6;">B\u1ea1n b\u1eaft bu\u1ed9c ph\u1ea3i <strong>\u0110\u1ed5i t\u00ean theo c\u00fa ph\u00e1p: T\u00ean + S\u0110T \u0111\u0103ng k\u00fd c\u1ee7a b\u1ea1n</strong>.<br>V\u00ed d\u1ee5: <strong>Gi\u00e1p - 0362675331</strong>. Ban t\u1ed5 ch\u1ee9c s\u1ebd duy\u1ec7t d\u1ef1a tr\u00ean danh s\u00e1ch \u0111\u0103ng k\u00fd.</p>'
       + '</div>';
   } else {
-    contentHtml += '<p style="color:#71717a;font-size:13px;margin:24px 0 0;line-height:1.6;">Chúng tôi sẽ gửi thêm thông tin chi tiết trước ngày học. Hãy theo dõi email nhé!</p>';
+    contentHtml += '<p style="color:#71717a;font-size:13px;margin:24px 0 0;line-height:1.6;">Ch\u00fang t\u00f4i s\u1ebd g\u1eedi th\u00eam th\u00f4ng tin chi ti\u1ebft tr\u01b0\u1edbc ng\u00e0y h\u1ecdc. H\u00e3y theo d\u00f5i email nh\u00e9!</p>';
   }
 
   var html = getEmailTemplate(title, contentHtml, "", "");
 
   try {
-    GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
-    Logger.log("\uD83D\uDCE7 Email HTML gửi thành công tới: " + toEmail);
+    GmailApp.sendEmail(toEmail, subject, "Vui l\u00f2ng xem email n\u00e0y tr\u00ean tr\u00ecnh duy\u1ec7t h\u1ed7 tr\u1ee3 HTML.", { htmlBody: html });
+    Logger.log("Email HTML g\u1eedi th\u00e0nh c\u00f4ng t\u1edbi: " + toEmail);
   } catch (err) {
-    Logger.log("\u26A0\uFE0F Lỗi gửi email: " + err.message);
+    Logger.log("L\u1ed7i g\u1eedi email: " + err.message);
   }
 }
 
@@ -606,18 +608,18 @@ function sendCourseEmail(toEmail, name, type) {
  * Gửi email thông báo tiến độ referral (khi có 1 người đăng ký qua link)
  */
 function sendReferralProgressEmail(toEmail, name, currentCount, refCode) {
-  var subject = "\uD83D\uDD25 Có người đăng ký qua link của bạn!";
+  var subject = String.fromCodePoint(0x1F525) + " C\u00f3 ng\u01b0\u1eddi \u0111\u0103ng k\u00fd qua link c\u1ee7a b\u1ea1n!";
   var remaining = 2 - currentCount;
   var siteUrl = "https://ai-funnel-course.vercel.app";
   var progressWidth = (currentCount * 50) + "%";
 
-  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
+  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin ch\u00e0o <strong>' + name + '</strong>,</p>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">'
-    + 'Tin vui! \uD83C\uDF89 Có <strong style="color:#ff3366;">1 người</strong> vừa đăng ký khóa học qua link giới thiệu của bạn!</p>'
+    + 'Tin vui! &#x1F389; C\u00f3 <strong style="color:#ff3366;">1 ng\u01b0\u1eddi</strong> v\u1eeba \u0111\u0103ng k\u00fd kh\u00f3a h\u1ecdc qua link gi\u1edbi thi\u1ec7u c\u1ee7a b\u1ea1n!</p>'
     // Progress Card
     + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
     + '<tr><td style="padding:24px;">'
-    + '<p style="color:#a1a1aa;font-size:13px;margin:0 0 12px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Tiến độ giới thiệu</p>'
+    + '<p style="color:#a1a1aa;font-size:13px;margin:0 0 12px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Ti\u1ebfn \u0111\u1ed9 gi\u1edbi thi\u1ec7u</p>'
     // Progress Bar
     + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">'
     + '<tr><td style="background-color:#3f3f46;border-radius:999px;height:8px;padding:0;">'
@@ -625,20 +627,20 @@ function sendReferralProgressEmail(toEmail, name, currentCount, refCode) {
     + '</td></tr></table>'
     + '<table width="100%" cellpadding="0" cellspacing="0">'
     + '<tr><td style="color:#fafafa;font-size:28px;font-weight:800;">' + currentCount + '<span style="color:#71717a;font-size:16px;font-weight:400;"> / 2</span></td>'
-    + '<td style="text-align:right;color:#ff7733;font-size:14px;font-weight:600;">Còn ' + remaining + ' người nữa!</td></tr>'
+    + '<td style="text-align:right;color:#ff7733;font-size:14px;font-weight:600;">C\u00f2n ' + remaining + ' ng\u01b0\u1eddi n\u1eefa!</td></tr>'
     + '</table></td></tr></table>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:24px 0 8px;line-height:1.7;">'
-    + 'Chỉ cần mời thêm <strong style="color:#ff7733;">' + remaining + ' người</strong> nữa, bạn sẽ nhận ngay <strong style="color:#22c55e;">Vé Miễn Phí</strong> tham gia khóa học! \uD83D\uDE80</p>'
-    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Chia sẻ link bên dưới cho bạn bè để hoàn thành thử thách nhé!</p>';
+    + 'Ch\u1ec9 c\u1ea7n m\u1eddi th\u00eam <strong style="color:#ff7733;">' + remaining + ' ng\u01b0\u1eddi</strong> n\u1eefa, b\u1ea1n s\u1ebd nh\u1eadn ngay <strong style="color:#22c55e;">V\u00e9 Mi\u1ec5n Ph\u00ed</strong> tham gia kh\u00f3a h\u1ecdc! &#x1F680;</p>'
+    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Chia s\u1ebb link b\u00ean d\u01b0\u1edbi cho b\u1ea1n b\u00e8 \u0111\u1ec3 ho\u00e0n th\u00e0nh th\u1eed th\u00e1ch nh\u00e9!</p>';
 
   var referralLink = siteUrl + "?ref=" + refCode;
-  var html = getEmailTemplate("Bạn có 1 Referral mới! \uD83D\uDD25", contentHtml, "Chia sẻ link ngay", referralLink);
+  var html = getEmailTemplate("B\u1ea1n c\u00f3 1 Referral m\u1edbi! " + String.fromCodePoint(0x1F525), contentHtml, "Chia s\u1ebb link ngay", referralLink);
 
   try {
-    GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
-    Logger.log("\uD83D\uDCE7 Referral progress email gửi tới: " + toEmail);
+    GmailApp.sendEmail(toEmail, subject, "Vui l\u00f2ng xem email n\u00e0y tr\u00ean tr\u00ecnh duy\u1ec7t h\u1ed7 tr\u1ee3 HTML.", { htmlBody: html });
+    Logger.log("Referral progress email g\u1eedi t\u1edbi: " + toEmail);
   } catch (err) {
-    Logger.log("\u26A0\uFE0F Lỗi gửi referral progress email: " + err.message);
+    Logger.log("L\u1ed7i g\u1eedi referral progress email: " + err.message);
   }
 }
 
