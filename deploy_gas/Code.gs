@@ -10,6 +10,7 @@ const CONFIG = {
   COURSE_TIME: "2/3/2026 - 19h30 thứ 2",
   ZOOM_LINK: "https://us06web.zoom.us/j/6426215363?omn=89413423261",
   GAS_KIT_LINK: "",
+  ZALO_GROUP_LINK: "https://zalo.me/g/htxihe230",
   // Facebook Scraper RapidAPI
   RAPIDAPI_KEY: "19e1e36dcemshb888996018daff6p101216jsn49b3e583a1a7",
   RAPIDAPI_HOST: "facebook-scraper3.p.rapidapi.com",
@@ -573,6 +574,9 @@ function sendCourseEmail(toEmail, name, type) {
     + '<a href="' + (CONFIG.ZOOM_LINK || "#") + '" style="color:#3b82f6;text-decoration:underline;word-break:break-all;">' + (CONFIG.ZOOM_LINK || "Sắp cập nhật") + '</a></td></tr>'
     + (isPaid ? '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">🎁 GAS Kit</td>'
     + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.GAS_KIT_LINK || "Sắp cập nhật") + '</td></tr>' : '')
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">💬 Nhóm Zalo</td>'
+    + '<td style="padding:8px 0;font-size:14px;font-weight:600;">'
+    + '<a href="' + CONFIG.ZALO_GROUP_LINK + '" style="color:#10b981;text-decoration:underline;">Tham gia ngay</a></td></tr>'
     + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">💳 Trạng thái</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:700;">'
     + '<span style="background:' + badgeBg + ';color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">' + badgeText + '</span>'
