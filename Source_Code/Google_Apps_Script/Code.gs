@@ -169,7 +169,7 @@ function sendOtpEmail(toEmail, otp) {
     + '</div>'
     + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Lưu ý: Mã này có hiệu lực trong vòng 10 phút. Tuyệt đối không chia sẻ mã này cho bất kỳ ai.</p>';
 
-  var html = getEmailTemplate("X\u00e1c th\u1ef1c Email " + String.fromCodePoint(0x1F512), contentHtml, "", "");
+  var html = getEmailTemplate("X\u00e1c th\u1ef1c Email &#x1F512;", contentHtml, "", "");
 
   try {
     GmailApp.sendEmail(toEmail, subject, "M\u00e3 OTP c\u1ee7a b\u1ea1n l\u00e0: " + otp, { htmlBody: html });
@@ -478,7 +478,7 @@ function handleVerifyFbShare(data) {
  * Gửi email thông báo nhận GAS Kit — HTML Premium
  */
 function sendGasKitEmail(toEmail, name) {
-  var subject = String.fromCodePoint(0x1F381) + " Ch\u00fac m\u1eebng \u2014 B\u1ea1n \u0111\u00e3 nh\u1eadn \u0111\u01b0\u1ee3c GAS Kit Standard Mi\u1ec5n Ph\u00ed!";
+  var subject = "Ch\u00fac m\u1eebng \u2014 B\u1ea1n \u0111\u00e3 nh\u1eadn \u0111\u01b0\u1ee3c GAS Kit Standard Mi\u1ec5n Ph\u00ed!";
 
   var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin ch\u00e0o <strong>' + name + '</strong>,</p>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">'
@@ -501,7 +501,7 @@ function sendGasKitEmail(toEmail, name) {
     + 'Ch\u00fang t\u00f4i \u0111\u00e3 c\u1ea5p quy\u1ec1n xem cho email <strong>' + toEmail + '</strong>. B\u1ea5m n\u00fat b\u00ean d\u01b0\u1edbi \u0111\u1ec3 truy c\u1eadp ngay!</p>'
     + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">L\u01b0u \u00fd: B\u1ea1n c\u1ea7n \u0111\u0103ng nh\u1eadp b\u1eb1ng \u0111\u00fang email n\u00e0y tr\u00ean Google Drive.</p>';
 
-  var html = getEmailTemplate("B\u1ea1n \u0111\u00e3 nh\u1eadn GAS Kit! " + String.fromCodePoint(0x1F381), contentHtml, "Truy c\u1eadp GAS Kit ngay", CONFIG.GAS_KIT_FOLDER_URL);
+  var html = getEmailTemplate("B\u1ea1n \u0111\u00e3 nh\u1eadn GAS Kit! &#x1F381;", contentHtml, "Truy c\u1eadp GAS Kit ngay", CONFIG.GAS_KIT_FOLDER_URL);
 
   try {
     GmailApp.sendEmail(toEmail, subject, "Vui l\u00f2ng xem email n\u00e0y tr\u00ean tr\u00ecnh duy\u1ec7t h\u1ed7 tr\u1ee3 HTML.", { htmlBody: html });
@@ -550,12 +550,12 @@ function getEmailTemplate(title, contentHtml, ctaText, ctaUrl) {
 function sendCourseEmail(toEmail, name, type) {
   var isPaid = (type === "paid");
   var subject = isPaid
-    ? String.fromCodePoint(0x1F389) + " X\u00e1c nh\u1eadn \u0110\u0103ng k\u00fd \u2014 Kh\u00f3a H\u1ecdc X\u00e2y D\u1ef1ng Ai Funnel"
-    : String.fromCodePoint(0x1F381) + " Ch\u00fac m\u1eebng \u2014 B\u1ea1n nh\u1eadn \u0111\u01b0\u1ee3c V\u00e9 Mi\u1ec5n Ph\u00ed!";
+    ? "X\u00e1c nh\u1eadn \u0110\u0103ng k\u00fd \u2014 Kh\u00f3a H\u1ecdc X\u00e2y D\u1ef1ng Ai Funnel"
+    : "Ch\u00fac m\u1eebng \u2014 B\u1ea1n nh\u1eadn \u0111\u01b0\u1ee3c V\u00e9 Mi\u1ec5n Ph\u00ed!";
 
   var title = isPaid
-    ? "\u0110\u0103ng k\u00fd th\u00e0nh c\u00f4ng! " + String.fromCodePoint(0x1F389)
-    : "B\u1ea1n \u0111\u00e3 nh\u1eadn V\u00e9 Mi\u1ec5n Ph\u00ed! " + String.fromCodePoint(0x1F381);
+    ? "\u0110\u0103ng k\u00fd th\u00e0nh c\u00f4ng! &#x1F389;"
+    : "B\u1ea1n \u0111\u00e3 nh\u1eadn V\u00e9 Mi\u1ec5n Ph\u00ed! &#x1F381;";
   var greeting = isPaid
     ? "C\u1ea3m \u01a1n b\u1ea1n \u0111\u00e3 \u0111\u0103ng k\u00fd <strong>Kh\u00f3a H\u1ecdc X\u00e2y D\u1ef1ng Ai Funnel</strong>!"
     : "Ch\u00fac m\u1eebng! B\u1ea1n \u0111\u00e3 \u0111\u1ee7 \u0111i\u1ec1u ki\u1ec7n nh\u1eadn <strong>V\u00e9 Mi\u1ec5n Ph\u00ed</strong> nh\u1edd ch\u01b0\u01a1ng tr\u00ecnh gi\u1edbi thi\u1ec7u!";
@@ -608,7 +608,7 @@ function sendCourseEmail(toEmail, name, type) {
  * Gửi email thông báo tiến độ referral (khi có 1 người đăng ký qua link)
  */
 function sendReferralProgressEmail(toEmail, name, currentCount, refCode) {
-  var subject = String.fromCodePoint(0x1F525) + " C\u00f3 ng\u01b0\u1eddi \u0111\u0103ng k\u00fd qua link c\u1ee7a b\u1ea1n!";
+  var subject = "C\u00f3 ng\u01b0\u1eddi \u0111\u0103ng k\u00fd qua link c\u1ee7a b\u1ea1n!";
   var remaining = 2 - currentCount;
   var siteUrl = "https://ai-funnel-course.vercel.app";
   var progressWidth = (currentCount * 50) + "%";
@@ -634,7 +634,7 @@ function sendReferralProgressEmail(toEmail, name, currentCount, refCode) {
     + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Chia s\u1ebb link b\u00ean d\u01b0\u1edbi cho b\u1ea1n b\u00e8 \u0111\u1ec3 ho\u00e0n th\u00e0nh th\u1eed th\u00e1ch nh\u00e9!</p>';
 
   var referralLink = siteUrl + "?ref=" + refCode;
-  var html = getEmailTemplate("B\u1ea1n c\u00f3 1 Referral m\u1edbi! " + String.fromCodePoint(0x1F525), contentHtml, "Chia s\u1ebb link ngay", referralLink);
+  var html = getEmailTemplate("B\u1ea1n c\u00f3 1 Referral m\u1edbi! &#x1F525;", contentHtml, "Chia s\u1ebb link ngay", referralLink);
 
   try {
     GmailApp.sendEmail(toEmail, subject, "Vui l\u00f2ng xem email n\u00e0y tr\u00ean tr\u00ecnh duy\u1ec7t h\u1ed7 tr\u1ee3 HTML.", { htmlBody: html });
