@@ -677,23 +677,29 @@ function setupPageViewsSheet() {
 // TRACK VISIT: Ghi nhan luot truy cap website
 // ============================================================
 function handleTrackVisit(data) {
-  var sheet = getSheet("PageViews");
-  if (!sheet) {
-    setupPageViewsSheet();
-    sheet = getSheet("PageViews");
+  try {
+    var sheet = getSheet("PageViews");
+    if (!sheet) {
+      setupPageViewsSheet();
+      sheet = getSheet("PageViews");
+    }
+
+    var id = Utilities.getUuid();
+    var source = (data.source || "Direct").trim();
+    var medium = (data.medium || "").trim();
+    var campaign = (data.campaign || "").trim();
+    var userAgent = (data.userAgent || "").trim();
+    var referrer = (data.referrer || "").trim();
+    var page = (data.page || "/").trim();
+
+    sheet.appendRow([id, new Date(), source, medium, campaign, userAgent, referrer, page]);
+    Logger.log("Tracked visit from: " + source);
+
+    return respond({ success: true });
+  } catch (e) {
+    Logger.log("Tracking Error: " + e.toString());
+    return respond({ success: true }); // Tra ve success de khong anh huong UX
   }
-
-  var id = Utilities.getUuid();
-  var source = (data.source || "Direct").trim();
-  var medium = (data.medium || "").trim();
-  var campaign = (data.campaign || "").trim();
-  var userAgent = (data.userAgent || "").trim();
-  var referrer = (data.referrer || "").trim();
-  var page = (data.page || "/").trim();
-
-  sheet.appendRow([id, new Date(), source, medium, campaign, userAgent, referrer, page]);
-
-  return respond({ success: true });
 }
 
 // ============================================================

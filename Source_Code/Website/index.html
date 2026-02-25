@@ -1092,22 +1092,19 @@ GAS Kit là bộ 6 AI Skill chuyên dụng giúp bạn lên plan, viết code, s
 
         var trafficSource = detectSource();
 
-        // Send tracking beacon (fire-and-forget)
-        try {
-            fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify({
-                    action: 'track_visit',
-                    source: trafficSource,
-                    medium: urlParams.get('utm_medium') || '',
-                    campaign: urlParams.get('utm_campaign') || '',
-                    userAgent: navigator.userAgent,
-                    referrer: document.referrer || '',
-                    page: window.location.pathname
-                })
-            });
-        } catch (e) { /* silent */ }
+        // Send tracking beacon (fire-and-forget, no mode:'no-cors' to avoid body drop on redirect)
+        fetch(API_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'track_visit',
+                source: trafficSource,
+                medium: urlParams.get('utm_medium') || '',
+                campaign: urlParams.get('utm_campaign') || '',
+                userAgent: navigator.userAgent,
+                referrer: document.referrer || '',
+                page: window.location.pathname
+            })
+        }).catch(function () { });
 
         const modal = document.getElementById('registerModal');
         const modalContent = document.getElementById('modalContent');
