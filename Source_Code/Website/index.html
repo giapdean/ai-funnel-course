@@ -604,7 +604,8 @@
 
             <p class="text-zinc-400 mb-8 max-w-xl mx-auto">Hoàn thành thử thách đơn giản bên dưới để nhận ngay bộ
                 <strong class="text-white">GAS Kit Standard</strong> trị giá <strong
-                    class="text-brand-red">499K</strong> hoàn toàn miễn phí!</p>
+                    class="text-brand-red">499K</strong> hoàn toàn miễn phí!
+            </p>
 
             <!-- Gift Box (clickable) -->
             <div id="giftBox" onclick="toggleGamePanel()" class="cursor-pointer mx-auto w-fit group">
@@ -753,6 +754,26 @@
                     nhận đăng ký</button>
             </form>
 
+            <!-- Step 1.5: OTP Verification (Hidden) -->
+            <form id="otpForm" class="hidden space-y-4 text-center">
+                <div
+                    class="w-16 h-16 rounded-2xl bg-brand-red/10 mx-auto flex items-center justify-center text-brand-red mb-2 border border-brand-red/20">
+                    <i data-lucide="mail-check" class="w-8 h-8"></i>
+                </div>
+                <p class="text-sm text-zinc-300">Vui lòng kiểm tra Email của bạn để lấy mã OTP gồm 6 chữ số.</p>
+                <div>
+                    <input id="otpInput" type="text" maxlength="6" required
+                        class="w-full text-center text-2xl font-mono tracking-[0.5em] bg-black/40 border border-white/10 p-4 rounded-xl text-white placeholder-zinc-700 focus:outline-none focus:ring-2 focus:ring-brand-red/50 focus:border-transparent transition-all"
+                        placeholder="------">
+                </div>
+                <button type="submit"
+                    class="w-full py-4 mt-2 bg-gradient-to-r from-brand-red to-brand-orange rounded-xl font-bold text-white shadow-lg hover:shadow-brand-red/30 transition-shadow">Xác
+                    minh OTP</button>
+                <div class="text-xs text-zinc-500 mt-4">
+                    <p>Mã có hiệu lực trong 10 phút.</p>
+                </div>
+            </form>
+
             <!-- Step 2: Payment (Hidden) -->
             <div id="stepPayment" class="hidden text-center space-y-6">
                 <div class="w-16 h-16 rounded-2xl bg-white/10 mx-auto flex items-center justify-center text-white mb-2">
@@ -855,14 +876,17 @@
         const modal = document.getElementById('registerModal');
         const modalContent = document.getElementById('modalContent');
         const regForm = document.getElementById('regForm');
+        const otpForm = document.getElementById('otpForm');
         const stepPayment = document.getElementById('stepPayment');
         const stepReferral = document.getElementById('stepReferral');
         const modalTitle = document.getElementById('modalTitle');
 
+        // Thêm biến lưu data để đăng ký sau khi qua bước OTP
+        let pendingRegistrationData = null;
+
         function showModal(type) {
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            // Animate in
             setTimeout(() => {
                 modalContent.classList.remove('scale-95', 'opacity-0');
                 modalContent.classList.add('scale-100', 'opacity-100');
@@ -873,7 +897,6 @@
         }
 
         function closeModal() {
-            // Animate out
             modalContent.classList.remove('scale-100', 'opacity-100');
             modalContent.classList.add('scale-95', 'opacity-0');
 
@@ -881,15 +904,19 @@
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
                 regForm.classList.remove('hidden');
+                otpForm.classList.add('hidden');
                 stepPayment.classList.add('hidden');
                 stepReferral.classList.add('hidden');
                 regForm.reset();
-            }, 300); // Wait for transition
+                otpForm.reset();
+                pendingRegistrationData = null;
+            }, 300);
         }
 
         const urlParams = new URLSearchParams(window.location.search);
         const referrer = urlParams.get('ref') || "";
 
+        // Form Info (Bước 1)
         regForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = regForm.querySelector('button');
@@ -909,26 +936,98 @@
                 type: document.getElementById('regType').value
             };
 
-            try {
-                // Keep original fetch logic
-                await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(data)
-                });
+            const type = document.getElementById('regType').value;
 
-                const type = document.getElementById('regType').value;
+            try {
                 if (type === 'paid') {
+                    // Paid ko cần OTP
+                    await fetch(API_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify(data)
+                    });
                     const paymentCode = `AIFUNNEL${data.phone.slice(-4)}${Date.now().toString().slice(-3)}`;
                     showPaymentStep(paymentCode);
                 } else {
-                    // ⚡ Đồng bộ với backend Code.gs: RefCode = 6 số cuối của SĐT
-                    const myRefCode = data.phone.replace(/\D/g, '').slice(-6);
-                    showReferralStep(myRefCode);
+                    // Referral -> Gửi OTP
+                    pendingRegistrationData = data;
+
+                    // Để tránh CORS block việc đọc kết quả, ta fetch không có header Content-Type, trình duyệt nhận như Simple Request
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({ action: 'send_otp', email: data.email })
+                    });
+
+                    let result;
+                    try {
+                        result = await response.json();
+                    } catch (e) {
+                        // Fallback fallback: Nếu bị CORS chặn đọc response JSON, ta xem như đã gửi thành công
+                        result = { success: true };
+                    }
+
+                    if (result.success === false) {
+                        alert("Lỗi gửi OTP: " + result.error);
+                    } else {
+                        // Chuyển sang bước OTP
+                        regForm.classList.add('hidden');
+                        otpForm.classList.remove('hidden');
+                        modalTitle.innerText = "Xác nhận Email";
+                    }
                 }
             } catch (err) {
                 console.error(err);
-                alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                alert("Có lỗi xảy ra. Hãy chắc chắn email của bạn là đúng.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        });
+
+        // Form OTP (Bước 2 của Referral)
+        otpForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = otpForm.querySelector('button');
+            const originalText = btn.innerText;
+
+            btn.disabled = true;
+            btn.innerHTML = `<i data-lucide="loader-2" class="w-5 h-5 animate-spin mx-auto"></i>`;
+            lucide.createIcons();
+
+            const otpValue = document.getElementById('otpInput').value;
+
+            try {
+                // Xác minh OTP
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'verify_otp', email: pendingRegistrationData.email, otp: otpValue })
+                });
+
+                let result;
+                try {
+                    result = await response.json();
+                } catch (e) {
+                    alert("Lỗi kết nối máy chủ khi xác thực OTP.");
+                    throw e;
+                }
+
+                if (result.success) {
+                    // OTP đúng -> Submit Register
+                    await fetch(API_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify(pendingRegistrationData)
+                    });
+
+                    // Hoàn thành
+                    const myRefCode = pendingRegistrationData.phone.replace(/\D/g, '').slice(-6);
+                    otpForm.classList.add('hidden');
+                    showReferralStep(myRefCode);
+                } else {
+                    alert(result.error || "Mã OTP không hợp lệ.");
+                }
+            } catch (err) {
+                console.error(err);
             } finally {
                 btn.disabled = false;
                 btn.innerText = originalText;

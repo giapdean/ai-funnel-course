@@ -7,7 +7,8 @@ const CONFIG = {
   SPREADSHEET_ID: "1mR7vS6nFQ-8A2v8Y3eXGBWJPB1ukm0GXTFPjs3qmOgs",
   SEPAY_TOKEN: "0651316513131331",
   COURSE_DATE: "2026-03-15",
-  ZOOM_LINK: "",
+  COURSE_TIME: "2/3/2026 - 19h30 thứ 2",
+  ZOOM_LINK: "https://us06web.zoom.us/j/6426215363?omn=89413423261",
   GAS_KIT_LINK: "",
   // Facebook Scraper RapidAPI
   RAPIDAPI_KEY: "19e1e36dcemshb888996018daff6p101216jsn49b3e583a1a7",
@@ -82,6 +83,10 @@ function doPost(e) {
 
     if (action === "register") {
       return handleRegister(payload);
+    } else if (action === "send_otp") {
+      return handleSendOtp(payload);
+    } else if (action === "verify_otp") {
+      return handleVerifyOtp(payload);
     } else if (action === "sepay_webhook") {
       return handleSepayWebhook(payload);
     } else if (action === "verify_fb_share") {
@@ -98,6 +103,78 @@ function doGet(e) {
   return ContentService.createTextOutput(
     JSON.stringify({ status: "active", project: "Ai Funnel Course Backend" })
   ).setMimeType(ContentService.MimeType.JSON);
+}
+
+// ============================================================
+// OTP AUTHENTICATION
+// ============================================================
+function handleSendOtp(data) {
+  const email = (data.email || "").trim().toLowerCase();
+  if (!email) {
+    return respond({ success: false, error: "Vui lòng nhập Email." });
+  }
+
+  // Tạo mã OTP 6 số ngẫu nhiên
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  
+  // Lưu vào Cache 10 phút
+  const cache = CacheService.getScriptCache();
+  cache.put("OTP_" + email, otp, 600);
+  
+  // Gửi email
+  sendOtpEmail(email, otp);
+  Logger.log("🔑 Đã gửi OTP " + otp + " tới " + email);
+
+  return respond({
+    success: true,
+    message: "Mã xác thực đã được gửi tới email của bạn."
+  });
+}
+
+function handleVerifyOtp(data) {
+  const email = (data.email || "").trim().toLowerCase();
+  const userOtp = (data.otp || "").trim();
+
+  if (!email || !userOtp) {
+    return respond({ success: false, error: "Vui lòng nhập đầy đủ Email và mã OTP." });
+  }
+
+  const cache = CacheService.getScriptCache();
+  const savedOtp = cache.get("OTP_" + email);
+
+  if (!savedOtp) {
+    return respond({ success: false, error: "Mã OTP đã hết hạn hoặc không tồn tại. Vui lòng gửi lại mã." });
+  }
+
+  if (savedOtp !== userOtp) {
+    return respond({ success: false, error: "Mã OTP không chính xác. Vui lòng thử lại." });
+  }
+
+  // OTP hợp lệ -> Xoá khỏi cache để tránh dùng lại
+  cache.remove("OTP_" + email);
+
+  return respond({
+    success: true,
+    message: "Xác thực email thành công!"
+  });
+}
+
+function sendOtpEmail(toEmail, otp) {
+  var subject = "Mã xác thực tham gia Thử Thách Viral";
+  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào,</p>'
+    + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">Mã xác thực (OTP) của bạn để tham gia Thử Thách Viral nhận khóa học miễn phí là:</p>'
+    + '<div style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);padding:24px;text-align:center;margin-bottom:24px;">'
+    + '<span style="font-size:32px;font-weight:800;letter-spacing:4px;color:#ff3366;">' + otp + '</span>'
+    + '</div>'
+    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Lưu ý: Mã này có hiệu lực trong vòng 10 phút. Tuyệt đối không chia sẻ mã này cho bất kỳ ai.</p>';
+
+  var html = getEmailTemplate("Xác thực Email 🔒", contentHtml, "", "");
+
+  try {
+    GmailApp.sendEmail(toEmail, subject, "Mã OTP của bạn là: " + otp, { htmlBody: html });
+  } catch (err) {
+    Logger.log("⚠️ Lỗi gửi OTP email: " + err.message);
+  }
 }
 
 // ============================================================
@@ -483,24 +560,33 @@ function sendCourseEmail(toEmail, name, type) {
   var badgeBg = isPaid ? "linear-gradient(135deg,#ff3366,#ff7733)" : "linear-gradient(135deg,#22c55e,#16a34a)";
   var badgeText = isPaid ? "ÄÃƒ THANH TOÃN" : "MIá»„N PHÃ";
 
-  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chÃ o <strong>' + name + '</strong>,</p>'
+  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">' + greeting + '</p>'
     // Info Card
     + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
     + '<tr><td style="padding:20px 24px;">'
     + '<table width="100%" cellpadding="0" cellspacing="0">'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:40%;">ðŸ“… NgÃ y há»c</td>'
-    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + CONFIG.COURSE_DATE + '</td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">ðŸ“¹ Link Zoom</td>'
-    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.ZOOM_LINK || "Sáº¯p cáº­p nháº­t") + '</td></tr>'
-    + (isPaid ? '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">ðŸŽ GAS Kit</td>'
-    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.GAS_KIT_LINK || "Sáº¯p cáº­p nháº­t") + '</td></tr>' : '')
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">ðŸ’³ HÃ¬nh thá»©c</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:35%;">📅 Thời gian</td>'
+    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + CONFIG.COURSE_TIME + '</td></tr>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">🎥 Link Zoom</td>'
+    + '<td style="padding:8px 0;font-size:14px;font-weight:600;">'
+    + '<a href="' + (CONFIG.ZOOM_LINK || "#") + '" style="color:#3b82f6;text-decoration:underline;word-break:break-all;">' + (CONFIG.ZOOM_LINK || "Sắp cập nhật") + '</a></td></tr>'
+    + (isPaid ? '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">🎁 GAS Kit</td>'
+    + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">' + (CONFIG.GAS_KIT_LINK || "Sắp cập nhật") + '</td></tr>' : '')
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">💳 Trạng thái</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:700;">'
     + '<span style="background:' + badgeBg + ';color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">' + badgeText + '</span>'
     + '</td></tr>'
-    + '</table></td></tr></table>'
-    + '<p style="color:#71717a;font-size:13px;margin:24px 0 0;line-height:1.6;">ChÃºng tÃ´i sáº½ gá»­i thÃªm thÃ´ng tin chi tiáº¿t trÆ°á»›c ngÃ y há»c. HÃ£y theo dÃµi email nhÃ©!</p>';
+    + '</table></td></tr></table>';
+
+  if (!isPaid) {
+    contentHtml += '<div style="margin-top:24px;background-color:rgba(234,179,8,0.1);border-left:4px solid #eab308;padding:16px;">'
+      + '<p style="margin:0;color:#fef08a;font-size:14px;font-weight:600;margin-bottom:8px;">⚠️ Lưu ý quan trọng khi vào Zoom:</p>'
+      + '<p style="margin:0;color:#d4d4d8;font-size:14px;line-height:1.6;">Bạn bắt buộc phải <strong>Đổi tên theo cú pháp: Tên + SĐT đăng ký của bạn</strong>.<br>Ví dụ: <strong>Giáp - 0362675331</strong>. Ban tổ chức sẽ duyệt dựa trên danh sách đăng ký.</p>'
+      + '</div>';
+  } else {
+    contentHtml += '<p style="color:#71717a;font-size:13px;margin:24px 0 0;line-height:1.6;">Chúng tôi sẽ gửi thêm thông tin chi tiết trước ngày học. Hãy theo dõi email nhé!</p>';
+  }
 
   var html = getEmailTemplate(title, contentHtml, "", "");
 
