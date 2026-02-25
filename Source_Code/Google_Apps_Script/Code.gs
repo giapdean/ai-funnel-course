@@ -1,5 +1,5 @@
 ﻿// ============================================================
-// Dá»± Ã¡n: KhÃ³a Há»c XÃ¢y Dá»±ng Ai Funnel
+// Dự án: Khóa Học Xây Dựng Ai Funnel
 // Backend: Google Apps Script
 // ============================================================
 
@@ -20,7 +20,7 @@ const CONFIG = {
 };
 
 // ============================================================
-// SETUP: Cháº¡y 1 láº§n Ä‘á»ƒ táº¡o Google Sheet Database
+// SETUP: Chạy 1 lần để tạo Google Sheet Database
 // ============================================================
 function setupSpreadsheet() {
   const ss = SpreadsheetApp.create("Ai Funnel Course - Database");
@@ -41,9 +41,9 @@ function setupSpreadsheet() {
   ]);
   txSheet.setFrozenRows(1);
   
-  Logger.log("âœ… Spreadsheet created: " + ss.getUrl());
-  Logger.log("ðŸ“‹ Spreadsheet ID: " + ss.getId());
-  Logger.log("âš ï¸ HÃƒY COPY Spreadsheet ID nÃ y vÃ o CONFIG.SPREADSHEET_ID á»Ÿ Code.gs!");
+  Logger.log("✅ Spreadsheet created: " + ss.getUrl());
+  Logger.log("📋 Spreadsheet ID: " + ss.getId());
+  Logger.log("⚠️ HÃY COPY Spreadsheet ID này vào CONFIG.SPREADSHEET_ID ở Code.gs!");
   
   return ss.getId();
 }
@@ -57,17 +57,17 @@ function getSheet(sheetName) {
 }
 
 function generateRefCode(phone) {
-  // âš¡ DÃ¹ng sá»‘ Ä‘iá»‡n thoáº¡i lÃ m RefCode (Ä‘á»“ng bá»™ vá»›i frontend index.html)
-  // CÃ´ng thá»©c: chá»‰ giá»¯ sá»‘, láº¥y 6 chá»¯ sá»‘ cuá»‘i
+  // ⚡ Dùng số điện thoại làm RefCode (đồng bộ với frontend index.html)
+  // Công thức: chỉ giữ số, lấy 6 chữ số cuối
   if (!phone) {
-    Logger.log("âš ï¸ generateRefCode: phone is empty!");
+    Logger.log("⚠️ generateRefCode: phone is empty!");
     return "000000";
   }
   return phone.replace(/\D/g, "").slice(-6);
 }
 
 function generatePaymentCode(email) {
-  // Format: AIFUNNEL + RefCode -- dÃ¹ng toUpperCase Ä‘á»ƒ trÃ¡nh mismatch
+  // Format: AIFUNNEL + RefCode -- dùng toUpperCase để tránh mismatch
   const refCode = email.substring(0, 4).toUpperCase().replace(/[^A-Z0-9]/g, "X");
   return "AIFUNNEL" + refCode + Date.now().toString().slice(-4);
 }
@@ -76,7 +76,7 @@ function generatePaymentCode(email) {
 // MAIN ENDPOINT
 // ============================================================
 function doPost(e) {
-  // âš¡ LuÃ´n bá»c trong try-catch Ä‘á»ƒ trÃ¡nh CORS Error (Bug #14, #15)
+  // ⚡ Luôn bọc trong try-catch để tránh CORS Error (Bug #14, #15)
   try {
     const payload = JSON.parse(e.postData.contents); // (Bug #9 fix)
     const action = payload.action;
@@ -187,19 +187,19 @@ function handleRegister(data) {
   const phone = (data.phone || "").trim();
   const referredBy = (data.referredBy || "").trim().toUpperCase();
 
-  // Táº¡o RefCode vÃ  PaymentCode
+  // Tạo RefCode và PaymentCode
   const refCode = generateRefCode(phone);
   const paymentCode = generatePaymentCode(email);
   const id = Utilities.getUuid();
   const timestamp = new Date();
 
-  // Ghi vÃ o Sheet
+  // Ghi vào Sheet
   sheet.appendRow([
     id, timestamp, name, email, phone,
     refCode, referredBy, "Pending", false
   ]);
 
-  // Náº¿u Ä‘Æ°á»£c giá»›i thiá»‡u, check Referral
+  // Nếu được giới thiệu, check Referral
   if (referredBy) {
     checkAndGrantFreeAccess(referredBy);
   }
@@ -208,12 +208,12 @@ function handleRegister(data) {
     success: true,
     refCode: refCode,
     paymentCode: paymentCode,
-    message: "ÄÄƒng kÃ½ thÃ nh cÃ´ng!"
+    message: "Đăng ký thành công!"
   });
 }
 
 // ============================================================
-// REFERRAL: Check vÃ  cáº¥p quyá»n Free
+// REFERRAL: Check và cấp quyền Free
 // ============================================================
 function checkAndGrantFreeAccess(referrerRefCode) {
   const sheet = getSheet("Users");
@@ -226,53 +226,53 @@ function checkAndGrantFreeAccess(referrerRefCode) {
   const emailSentCol = headers.indexOf("EmailSent");
   const nameCol = headers.indexOf("FullName");
 
-  // âš¡ LuÃ´n cast sang String vÃ¬ Google Sheets tráº£ vá» Number cho RefCode toÃ n sá»‘
+  // ⚡ Luôn cast sang String vì Google Sheets trả về Number cho RefCode toàn số
   const refCodeTarget = String(referrerRefCode).trim();
-  Logger.log("ðŸ” Checking referral for RefCode: " + refCodeTarget);
+  Logger.log("🔍 Checking referral for RefCode: " + refCodeTarget);
 
-  // Äáº¿m sá»‘ ngÆ°á»i Ä‘Æ°á»£c giá»›i thiá»‡u bá»Ÿi referrerRefCode
+  // Đếm số người được giới thiệu bởi referrerRefCode
   let count = 0;
   let referrerRow = -1;
   let referrerData = null;
 
   for (let i = 1; i < data.length; i++) {
     const row = data[i];
-    // âš¡ Cast sang String trÆ°á»›c khi so sÃ¡nh (fix Bug: Number !== String)
+    // ⚡ Cast sang String trước khi so sánh (fix Bug: Number !== String)
     const rowRefCode = String(row[refCodeCol] || "").trim();
     const rowReferredBy = String(row[referredByCol] || "").trim();
     const rowStatus = String(row[statusCol] || "").trim().toLowerCase();
 
-    // TÃ¬m hÃ ng cá»§a ngÆ°á»i giá»›i thiá»‡u
+    // Tìm hàng của người giới thiệu
     if (rowRefCode === refCodeTarget) {
       referrerRow = i + 1;
       referrerData = row;
     }
-    // Äáº¿m sá»‘ ngÆ°á»i Ä‘Æ°á»£c giá»›i thiá»‡u (vÃ  Ä‘Ã£ Ä‘Äƒng kÃ½ tháº­t - Pending/Paid/Free)
+    // Đếm số người được giới thiệu (và đã đăng ký thật - Pending/Paid/Free)
     if (rowReferredBy === refCodeTarget && (rowStatus === "pending" || rowStatus === "paid" || rowStatus === "free")) {
       count++;
     }
   }
 
-  Logger.log("ðŸ“Š Referral count for " + refCodeTarget + ": " + count + " | Referrer found at row: " + referrerRow);
+  Logger.log("📊 Referral count for " + refCodeTarget + ": " + count + " | Referrer found at row: " + referrerRow);
 
   if (!referrerData || referrerRow < 0) return;
 
   const currentStatus = String(referrerData[statusCol] || "").trim().toLowerCase();
 
-  // ðŸ”” Khi cÃ³ Ä‘Ãºng 1 ngÆ°á»i giá»›i thiá»‡u -> gá»­i email thÃ´ng bÃ¡o tiáº¿n Ä‘á»™
+  // 🔔 Khi có đúng 1 người giới thiệu -> gửi email thông báo tiến độ
   if (count === 1 && currentStatus === "pending") {
     sendReferralProgressEmail(referrerData[emailCol], referrerData[nameCol], count, refCodeTarget);
-    Logger.log("ðŸ“§ Gá»­i email thÃ´ng bÃ¡o 1 referral cho: " + referrerData[emailCol]);
+    Logger.log("📧 Gửi email thông báo 1 referral cho: " + referrerData[emailCol]);
   }
 
-  // ðŸŽ‰ Náº¿u Ä‘á»§ 2 ngÆ°á»i vÃ  ngÆ°á»i giá»›i thiá»‡u váº«n cÃ²n Pending -> cáº¥p Free
+  // 🎉 Nếu đủ 2 người và người giới thiệu vẫn còn Pending -> cấp Free
   if (count >= 2 && currentStatus === "pending") {
     sheet.getRange(referrerRow, statusCol + 1).setValue("Free");
-    // Gá»­i email náº¿u chÆ°a gá»­i
+    // Gửi email nếu chưa gửi
     if (!referrerData[emailSentCol]) {
       sendCourseEmail(referrerData[emailCol], referrerData[nameCol], "free");
       sheet.getRange(referrerRow, emailSentCol + 1).setValue(true);
-      Logger.log("âœ… Cáº¥p Free cho: " + referrerData[emailCol]);
+      Logger.log("✅ Cấp Free cho: " + referrerData[emailCol]);
     }
   }
 }
@@ -281,18 +281,18 @@ function checkAndGrantFreeAccess(referrerRefCode) {
 // SEPAY WEBHOOK HANDLER
 // ============================================================
 function handleSepayWebhook(data) {
-  // Normalize Ä‘á»ƒ trÃ¡nh Bug #19 (khoáº£ng tráº¯ng, hoa thÆ°á»ng)
+  // Normalize để tránh Bug #19 (khoảng trắng, hoa thường)
   const transferContent = (data.transferContent || "").toUpperCase().replace(/\s/g, "");
   const amount = parseFloat(data.transferAmount || 0);
 
-  Logger.log("ðŸ“© Webhook received: " + transferContent + " | " + amount);
+  Logger.log("📩 Webhook received: " + transferContent + " | " + amount);
 
   // Ghi Transaction log
   const txSheet = getSheet("Transactions");
   const txId = Utilities.getUuid();
   txSheet.appendRow([txId, new Date(), "", amount, transferContent, "received"]);
 
-  // TÃ¬m user cÃ³ PaymentCode khá»›p trong ná»™i dung chuyá»ƒn khoáº£n
+  // Tìm user có PaymentCode khớp trong nội dung chuyển khoản
   if (amount >= 3000000 && transferContent.includes("AIFUNNEL")) {
     const userSheet = getSheet("Users");
     const data2 = userSheet.getDataRange().getValues();
@@ -302,7 +302,7 @@ function handleSepayWebhook(data) {
     const nameCol = headers.indexOf("FullName");
     const emailSentCol = headers.indexOf("EmailSent");
 
-    // Tra cá»©u user cÃ³ email trong content (táº¡m thá»i dÃ¹ng cÃ¡ch kiá»ƒm tra Ä‘Æ¡n giáº£n)
+    // Tra cứu user có email trong content (tạm thời dùng cách kiểm tra đơn giản)
     for (let i = 1; i < data2.length; i++) {
       const row = data2[i];
       const email = (row[emailCol] || "").toLowerCase();
@@ -311,14 +311,14 @@ function handleSepayWebhook(data) {
       
       if (transferContent.includes(expectedCode) && row[statusCol] === "Pending") {
         userSheet.getRange(i + 1, statusCol + 1).setValue("Paid");
-        // Cáº­p nháº­t txSheet vá»›i email
+        // Cập nhật txSheet với email
         txSheet.getRange(txSheet.getLastRow(), emailCol + 1).setValue(email);
-        // Gá»­i email xÃ¡c nháº­n
+        // Gửi email xác nhận
         if (!row[emailSentCol]) {
           sendCourseEmail(email, row[nameCol], "paid");
           userSheet.getRange(i + 1, emailSentCol + 1).setValue(true);
         }
-        Logger.log("âœ… Thanh toÃ¡n OK: " + email);
+        Logger.log("✅ Thanh toán OK: " + email);
         break;
       }
     }
@@ -332,36 +332,36 @@ function handleSepayWebhook(data) {
 // ============================================================
 
 /**
- * Setup: Táº¡o tab GASKit trong Spreadsheet (cháº¡y 1 láº§n)
+ * Setup: Tạo tab GASKit trong Spreadsheet (chạy 1 lần)
  */
 function setupGASKitSheet() {
   var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
   var existing = ss.getSheetByName("GASKit");
   if (existing) {
-    Logger.log("âš ï¸ Tab GASKit Ä‘Ã£ tá»“n táº¡i");
+    Logger.log("⚠️ Tab GASKit đã tồn tại");
     return;
   }
   var sheet = ss.insertSheet("GASKit");
   sheet.appendRow(["ID", "Timestamp", "Email", "PostURL", "AuthorName", "AuthorURL", "Followers", "Status"]);
   sheet.setFrozenRows(1);
-  Logger.log("âœ… Táº¡o tab GASKit thÃ nh cÃ´ng");
+  Logger.log("✅ Tạo tab GASKit thành công");
 }
 
 /**
- * Handler: XÃ¡c thá»±c bÃ i viáº¿t Facebook vÃ  cáº¥p GAS Kit
+ * Handler: Xác thực bài viết Facebook và cấp GAS Kit
  */
 function handleVerifyFbShare(data) {
   var email = (data.email || "").trim().toLowerCase();
   var postUrl = (data.postUrl || "").trim();
 
   if (!email || !postUrl) {
-    return respond({ success: false, error: "Vui lÃ²ng nháº­p Email vÃ  Link bÃ i viáº¿t." });
+    return respond({ success: false, error: "Vui lòng nhập Email và Link bài viết." });
   }
 
-  // âš¡ Chá»‘ng duplicate: check email Ä‘Ã£ nháº­n chÆ°a
+  // ⚡ Chống duplicate: check email đã nhận chưa
   var sheet = getSheet("GASKit");
   if (!sheet) {
-    // Tá»± táº¡o tab náº¿u chÆ°a cÃ³
+    // Tự tạo tab nếu chưa có
     setupGASKitSheet();
     sheet = getSheet("GASKit");
   }
@@ -370,15 +370,15 @@ function handleVerifyFbShare(data) {
     var rowEmail = String(existingData[i][2] || "").trim().toLowerCase();
     var rowStatus = String(existingData[i][7] || "").trim().toLowerCase();
     if (rowEmail === email && rowStatus === "approved") {
-      return respond({ success: false, error: "Email nÃ y Ä‘Ã£ nháº­n GAS Kit rá»“i! Má»—i email chá»‰ Ä‘Æ°á»£c nháº­n 1 láº§n." });
+      return respond({ success: false, error: "Email này đã nhận GAS Kit rồi! Mỗi email chỉ được nhận 1 lần." });
     }
   }
 
-  // Step 1: Gá»i API láº¥y ná»™i dung bÃ i viáº¿t
+  // Step 1: Gọi API lấy nội dung bài viết
   var postResult;
   try {
     var postApiUrl = "https://" + CONFIG.RAPIDAPI_HOST + "/post?post_url=" + encodeURIComponent(postUrl);
-    Logger.log("ðŸ”— Calling API: " + postApiUrl);
+    Logger.log("🔗 Calling API: " + postApiUrl);
     var postResponse = UrlFetchApp.fetch(postApiUrl, {
       method: "GET",
       headers: {
@@ -389,35 +389,35 @@ function handleVerifyFbShare(data) {
     });
     var responseCode = postResponse.getResponseCode();
     var responseText = postResponse.getContentText();
-    Logger.log("ðŸ“¡ API response code: " + responseCode + " | Body (first 500): " + responseText.substring(0, 500));
+    Logger.log("📡 API response code: " + responseCode + " | Body (first 500): " + responseText.substring(0, 500));
     if (responseCode !== 200) {
-      return respond({ success: false, error: "API tráº£ vá» lá»—i (code " + responseCode + "). Vui lÃ²ng thá»­ láº¡i." });
+      return respond({ success: false, error: "API trả về lỗi (code " + responseCode + "). Vui lòng thử lại." });
     }
     postResult = JSON.parse(responseText);
   } catch (err) {
-    Logger.log("âš ï¸ API post error: " + err.message);
-    return respond({ success: false, error: "Lá»—i káº¿t ná»‘i API: " + err.message });
+    Logger.log("⚠️ API post error: " + err.message);
+    return respond({ success: false, error: "Lỗi kết nối API: " + err.message });
   }
 
   if (!postResult || !postResult.results || !postResult.results.message) {
-    return respond({ success: false, error: "KhÃ´ng tÃ¬m tháº¥y bÃ i viáº¿t hoáº·c bÃ i viáº¿t khÃ´ng cÃ´ng khai." });
+    return respond({ success: false, error: "Không tìm thấy bài viết hoặc bài viết không công khai." });
   }
 
   // Check hashtag #aifunnel (case-insensitive)
   var postMessage = (postResult.results.message || "").toLowerCase();
   if (postMessage.indexOf("#aifunnel") === -1) {
-    return respond({ success: false, error: "BÃ i viáº¿t chÆ°a cÃ³ hashtag #aifunnel. Vui lÃ²ng thÃªm hashtag vÃ  thá»­ láº¡i." });
+    return respond({ success: false, error: "Bài viết chưa có hashtag #aifunnel. Vui lòng thêm hashtag và thử lại." });
   }
 
-  // Láº¥y thÃ´ng tin tÃ¡c giáº£
+  // Lấy thông tin tác giả
   var authorName = (postResult.results.author && postResult.results.author.name) || "Unknown";
   var authorUrl = (postResult.results.author && postResult.results.author.url) || "";
 
   if (!authorUrl) {
-    return respond({ success: false, error: "KhÃ´ng láº¥y Ä‘Æ°á»£c thÃ´ng tin tÃ¡c giáº£. Vui lÃ²ng kiá»ƒm tra bÃ i viáº¿t." });
+    return respond({ success: false, error: "Không lấy được thông tin tác giả. Vui lòng kiểm tra bài viết." });
   }
 
-  // Step 2: Gá»i API kiá»ƒm tra followers
+  // Step 2: Gọi API kiểm tra followers
   var pageResult;
   try {
     var pageApiUrl = "https://" + CONFIG.RAPIDAPI_HOST + "/page/details?url=" + encodeURIComponent(authorUrl);
@@ -431,8 +431,8 @@ function handleVerifyFbShare(data) {
     });
     pageResult = JSON.parse(pageResponse.getContentText());
   } catch (err) {
-    Logger.log("âš ï¸ API page error: " + err.message);
-    return respond({ success: false, error: "KhÃ´ng thá»ƒ kiá»ƒm tra thÃ´ng tin tÃ i khoáº£n Facebook." });
+    Logger.log("⚠️ API page error: " + err.message);
+    return respond({ success: false, error: "Không thể kiểm tra thông tin tài khoản Facebook." });
   }
 
   var followers = 0;
@@ -443,79 +443,79 @@ function handleVerifyFbShare(data) {
   if (followers < CONFIG.MIN_FOLLOWERS) {
     return respond({
       success: false,
-      error: "TÃ i khoáº£n Facebook cáº§n cÃ³ tá»‘i thiá»ƒu " + CONFIG.MIN_FOLLOWERS + " followers. Hiá»‡n táº¡i: " + followers + " followers."
+      error: "Tài khoản Facebook cần có tối thiểu " + CONFIG.MIN_FOLLOWERS + " followers. Hiện tại: " + followers + " followers."
     });
   }
 
-  // âœ… Äá»§ Ä‘iá»u kiá»‡n! Ghi vÃ o sheet
+  // ✅ Đủ điều kiện! Ghi vào sheet
   var id = Utilities.getUuid();
   sheet.appendRow([id, new Date(), email, postUrl, authorName, authorUrl, followers, "Approved"]);
 
-  // Cáº¥p quyá»n xem Drive folder
+  // Cấp quyền xem Drive folder
   try {
     var folder = DriveApp.getFolderById(CONFIG.GAS_KIT_FOLDER_ID);
     folder.addViewer(email);
-    Logger.log("âœ… Cáº¥p quyá»n xem Drive folder cho: " + email);
+    Logger.log("✅ Cấp quyền xem Drive folder cho: " + email);
   } catch (err) {
-    Logger.log("âš ï¸ Lá»—i cáº¥p quyá»n Drive: " + err.message);
+    Logger.log("⚠️ Lỗi cấp quyền Drive: " + err.message);
   }
 
-  // Gá»­i email thÃ´ng bÃ¡o
+  // Gửi email thông báo
   sendGasKitEmail(email, authorName);
 
-  Logger.log("âœ… GAS Kit approved cho: " + email + " | Followers: " + followers);
+  Logger.log("✅ GAS Kit approved cho: " + email + " | Followers: " + followers);
 
   return respond({
     success: true,
-    message: "XÃ¡c thá»±c thÃ nh cÃ´ng! Vui lÃ²ng kiá»ƒm tra email Ä‘á»ƒ nháº­n GAS Kit.",
+    message: "Xác thực thành công! Vui lòng kiểm tra email để nhận GAS Kit.",
     followers: followers,
     authorName: authorName
   });
 }
 
 /**
- * Gá»­i email thÃ´ng bÃ¡o nháº­n GAS Kit â€” HTML Premium
+ * Gửi email thông báo nhận GAS Kit — HTML Premium
  */
 function sendGasKitEmail(toEmail, name) {
-  var subject = "ðŸŽ ChÃºc má»«ng â€” Báº¡n Ä‘Ã£ nháº­n Ä‘Æ°á»£c GAS Kit Standard Miá»…n PhÃ­!";
+  var subject = "🎁 Chúc mừng — Bạn đã nhận được GAS Kit Standard Miễn Phí!";
 
-  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chÃ o <strong>' + name + '</strong>,</p>'
+  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">'
-    + 'ChÃºc má»«ng! ðŸŽ‰ Báº¡n Ä‘Ã£ hoÃ n thÃ nh thá»­ thÃ¡ch vÃ  nháº­n Ä‘Æ°á»£c <strong style="color:#ff3366;">GAS Kit Standard</strong> miá»…n phÃ­!</p>'
+    + 'Chúc mừng! 🎉 Bạn đã hoàn thành thử thách và nhận được <strong style="color:#ff3366;">GAS Kit Standard</strong> miễn phí!</p>'
     // Info Card
     + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
     + '<tr><td style="padding:20px 24px;">'
     + '<table width="100%" cellpadding="0" cellspacing="0">'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:40%;">ðŸ“¦ Bá»™ Kit</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;width:40%;">📦 Bộ Kit</td>'
     + '<td style="padding:8px 0;color:#fafafa;font-size:14px;font-weight:600;">GAS Kit Standard</td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">ðŸ“‚ Truy cáº­p</td>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">📂 Truy cập</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:600;">'
-    + '<a href="' + CONFIG.GAS_KIT_FOLDER_URL + '" style="color:#ff3366;text-decoration:underline;">Má»Ÿ Google Drive</a></td></tr>'
-    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">âœ… Tráº¡ng thÃ¡i</td>'
+    + '<a href="' + CONFIG.GAS_KIT_FOLDER_URL + '" style="color:#ff3366;text-decoration:underline;">Mở Google Drive</a></td></tr>'
+    + '<tr><td style="padding:8px 0;color:#a1a1aa;font-size:14px;">✅ Trạng thái</td>'
     + '<td style="padding:8px 0;font-size:14px;font-weight:700;">'
-    + '<span style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">ÄÃƒ Cáº¤P QUYá»€N</span>'
+    + '<span style="background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:4px 12px;border-radius:999px;font-size:12px;">ĐÃ CẤP QUYỀN</span>'
     + '</td></tr>'
     + '</table></td></tr></table>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:24px 0 8px;line-height:1.7;">'
-    + 'ChÃºng tÃ´i Ä‘Ã£ cáº¥p quyá»n xem cho email <strong>' + toEmail + '</strong>. Báº¥m nÃºt bÃªn dÆ°á»›i Ä‘á»ƒ truy cáº­p ngay!</p>'
-    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">LÆ°u Ã½: Báº¡n cáº§n Ä‘Äƒng nháº­p báº±ng Ä‘Ãºng email nÃ y trÃªn Google Drive.</p>';
+    + 'Chúng tôi đã cấp quyền xem cho email <strong>' + toEmail + '</strong>. Bấm nút bên dưới để truy cập ngay!</p>'
+    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Lưu ý: Bạn cần đăng nhập bằng đúng email này trên Google Drive.</p>';
 
-  var html = getEmailTemplate("Báº¡n Ä‘Ã£ nháº­n GAS Kit! ðŸŽ", contentHtml, "Truy cáº­p GAS Kit ngay", CONFIG.GAS_KIT_FOLDER_URL);
+  var html = getEmailTemplate("Bạn đã nhận GAS Kit! 🎁", contentHtml, "Truy cập GAS Kit ngay", CONFIG.GAS_KIT_FOLDER_URL);
 
   try {
-    GmailApp.sendEmail(toEmail, subject, "Vui lÃ²ng xem email nÃ y trÃªn trÃ¬nh duyá»‡t há»— trá»£ HTML.", { htmlBody: html });
-    Logger.log("ðŸ“§ GAS Kit email gá»­i tá»›i: " + toEmail);
+    GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
+    Logger.log("📧 GAS Kit email gửi tới: " + toEmail);
   } catch (err) {
-    Logger.log("âš ï¸ Lá»—i gá»­i GAS Kit email: " + err.message);
+    Logger.log("⚠️ Lỗi gửi GAS Kit email: " + err.message);
   }
 }
 
 // ============================================================
-// EMAIL SERVICE â€” Premium HTML Templates
+// EMAIL SERVICE — Premium HTML Templates
 // ============================================================
 
 /**
- * Táº¡o base HTML template cho email (dark theme, Ä‘á»“ng bá»™ giao diá»‡n web)
+ * Tạo base HTML template cho email (dark theme, đồng bộ giao diện web)
  */
 function getEmailTemplate(title, contentHtml, ctaText, ctaUrl) {
   return '<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>'
@@ -537,28 +537,28 @@ function getEmailTemplate(title, contentHtml, ctaText, ctaUrl) {
     // Footer
     + '<tr><td style="background-color:#111113;border-radius:0 0 16px 16px;padding:24px 40px;text-align:center;border:1px solid rgba(255,255,255,0.05);border-top:none;">'
     + '<p style="margin:0;color:#71717a;font-size:12px;line-height:1.6;">'
-    + 'Â© 2026 Ai Funnel Course Â· Powered by Antigravity<br>'
-    + 'Email nÃ y Ä‘Æ°á»£c gá»­i tá»± Ä‘á»™ng, vui lÃ²ng khÃ´ng tráº£ lá»i.</p>'
+    + '© 2026 Ai Funnel Course · Powered by Antigravity<br>'
+    + 'Email này được gửi tự động, vui lòng không trả lời.</p>'
     + '</td></tr>'
     + '</table></td></tr></table></body></html>';
 }
 
 /**
- * Gá»­i email xÃ¡c nháº­n khÃ³a há»c (Paid hoáº·c Free) â€” HTML Premium
+ * Gửi email xác nhận khóa học (Paid hoặc Free) — HTML Premium
  */
 function sendCourseEmail(toEmail, name, type) {
   var isPaid = (type === "paid");
   var subject = isPaid
-    ? "ðŸŽ‰ XÃ¡c nháº­n ÄÄƒng kÃ½ â€” KhÃ³a Há»c XÃ¢y Dá»±ng Ai Funnel"
-    : "ðŸŽ ChÃºc má»«ng â€” Báº¡n nháº­n Ä‘Æ°á»£c VÃ© Miá»…n PhÃ­!";
+    ? "🎉 Xác nhận Đăng ký — Khóa Học Xây Dựng Ai Funnel"
+    : "🎁 Chúc mừng — Bạn nhận được Vé Miễn Phí!";
 
-  var title = isPaid ? "ÄÄƒng kÃ½ thÃ nh cÃ´ng! ðŸŽ‰" : "Báº¡n Ä‘Ã£ nháº­n VÃ© Miá»…n PhÃ­! ðŸŽ";
+  var title = isPaid ? "Đăng ký thành công! 🎉" : "Bạn đã nhận Vé Miễn Phí! 🎁";
   var greeting = isPaid
-    ? "Cáº£m Æ¡n báº¡n Ä‘Ã£ Ä‘Äƒng kÃ½ <strong>KhÃ³a Há»c XÃ¢y Dá»±ng Ai Funnel</strong>!"
-    : "ChÃºc má»«ng! Báº¡n Ä‘Ã£ Ä‘á»§ Ä‘iá»u kiá»‡n nháº­n <strong>VÃ© Miá»…n PhÃ­</strong> nhá» chÆ°Æ¡ng trÃ¬nh giá»›i thiá»‡u!";
+    ? "Cảm ơn bạn đã đăng ký <strong>Khóa Học Xây Dựng Ai Funnel</strong>!"
+    : "Chúc mừng! Bạn đã đủ điều kiện nhận <strong>Vé Miễn Phí</strong> nhờ chương trình giới thiệu!";
 
   var badgeBg = isPaid ? "linear-gradient(135deg,#ff3366,#ff7733)" : "linear-gradient(135deg,#22c55e,#16a34a)";
-  var badgeText = isPaid ? "ÄÃƒ THANH TOÃN" : "MIá»„N PHÃ";
+  var badgeText = isPaid ? "ĐÃ THANH TOÁN" : "MIỄN PHÍ";
 
   var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">' + greeting + '</p>'
@@ -591,29 +591,29 @@ function sendCourseEmail(toEmail, name, type) {
   var html = getEmailTemplate(title, contentHtml, "", "");
 
   try {
-    GmailApp.sendEmail(toEmail, subject, "Vui lÃ²ng xem email nÃ y trÃªn trÃ¬nh duyá»‡t há»— trá»£ HTML.", { htmlBody: html });
-    Logger.log("ðŸ“§ Email HTML gá»­i thÃ nh cÃ´ng tá»›i: " + toEmail);
+    GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
+    Logger.log("📧 Email HTML gửi thành công tới: " + toEmail);
   } catch (err) {
-    Logger.log("âš ï¸ Lá»—i gá»­i email: " + err.message);
+    Logger.log("⚠️ Lỗi gửi email: " + err.message);
   }
 }
 
 /**
- * Gá»­i email thÃ´ng bÃ¡o tiáº¿n Ä‘á»™ referral (khi cÃ³ 1 ngÆ°á»i Ä‘Äƒng kÃ½ qua link)
+ * Gửi email thông báo tiến độ referral (khi có 1 người đăng ký qua link)
  */
 function sendReferralProgressEmail(toEmail, name, currentCount, refCode) {
-  var subject = "ðŸ”¥ CÃ³ ngÆ°á»i Ä‘Äƒng kÃ½ qua link cá»§a báº¡n!";
+  var subject = "🔥 Có người đăng ký qua link của bạn!";
   var remaining = 2 - currentCount;
   var siteUrl = "https://ai-funnel-course.vercel.app";
   var progressWidth = (currentCount * 50) + "%";
 
-  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chÃ o <strong>' + name + '</strong>,</p>'
+  var contentHtml = '<p style="color:#fafafa;font-size:16px;margin:0 0 20px;line-height:1.6;">Xin chào <strong>' + name + '</strong>,</p>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:0 0 24px;line-height:1.7;">'
-    + 'Tin vui! ðŸŽ‰ CÃ³ <strong style="color:#ff3366;">1 ngÆ°á»i</strong> vá»«a Ä‘Äƒng kÃ½ khÃ³a há»c qua link giá»›i thiá»‡u cá»§a báº¡n!</p>'
+    + 'Tin vui! 🎉 Có <strong style="color:#ff3366;">1 người</strong> vừa đăng ký khóa học qua link giới thiệu của bạn!</p>'
     // Progress Card
     + '<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#27272a;border-radius:12px;border:1px solid rgba(255,255,255,0.08);">'
     + '<tr><td style="padding:24px;">'
-    + '<p style="color:#a1a1aa;font-size:13px;margin:0 0 12px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Tiáº¿n Ä‘á»™ giá»›i thiá»‡u</p>'
+    + '<p style="color:#a1a1aa;font-size:13px;margin:0 0 12px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Tiến độ giới thiệu</p>'
     // Progress Bar
     + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">'
     + '<tr><td style="background-color:#3f3f46;border-radius:999px;height:8px;padding:0;">'
@@ -621,20 +621,20 @@ function sendReferralProgressEmail(toEmail, name, currentCount, refCode) {
     + '</td></tr></table>'
     + '<table width="100%" cellpadding="0" cellspacing="0">'
     + '<tr><td style="color:#fafafa;font-size:28px;font-weight:800;">' + currentCount + '<span style="color:#71717a;font-size:16px;font-weight:400;"> / 2</span></td>'
-    + '<td style="text-align:right;color:#ff7733;font-size:14px;font-weight:600;">CÃ²n ' + remaining + ' ngÆ°á»i ná»¯a!</td></tr>'
+    + '<td style="text-align:right;color:#ff7733;font-size:14px;font-weight:600;">Còn ' + remaining + ' người nữa!</td></tr>'
     + '</table></td></tr></table>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:24px 0 8px;line-height:1.7;">'
-    + 'Chá»‰ cáº§n má»i thÃªm <strong style="color:#ff7733;">' + remaining + ' ngÆ°á»i</strong> ná»¯a, báº¡n sáº½ nháº­n ngay <strong style="color:#22c55e;">VÃ© Miá»…n PhÃ­</strong> tham gia khÃ³a há»c! ðŸš€</p>'
-    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Chia sáº» link bÃªn dÆ°á»›i cho báº¡n bÃ¨ Ä‘á»ƒ hoÃ n thÃ nh thá»­ thÃ¡ch nhÃ©!</p>';
+    + 'Chỉ cần mời thêm <strong style="color:#ff7733;">' + remaining + ' người</strong> nữa, bạn sẽ nhận ngay <strong style="color:#22c55e;">Vé Miễn Phí</strong> tham gia khóa học! 🚀</p>'
+    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Chia sẻ link bên dưới cho bạn bè để hoàn thành thử thách nhé!</p>';
 
   var referralLink = siteUrl + "?ref=" + refCode;
-  var html = getEmailTemplate("Báº¡n cÃ³ 1 Referral má»›i! ðŸ”¥", contentHtml, "Chia sáº» link ngay", referralLink);
+  var html = getEmailTemplate("Bạn có 1 Referral mới! 🔥", contentHtml, "Chia sẻ link ngay", referralLink);
 
   try {
-    GmailApp.sendEmail(toEmail, subject, "Vui lÃ²ng xem email nÃ y trÃªn trÃ¬nh duyá»‡t há»— trá»£ HTML.", { htmlBody: html });
-    Logger.log("ðŸ“§ Referral progress email gá»­i tá»›i: " + toEmail);
+    GmailApp.sendEmail(toEmail, subject, "Vui lòng xem email này trên trình duyệt hỗ trợ HTML.", { htmlBody: html });
+    Logger.log("📧 Referral progress email gửi tới: " + toEmail);
   } catch (err) {
-    Logger.log("âš ï¸ Lá»—i gá»­i referral progress email: " + err.message);
+    Logger.log("⚠️ Lỗi gửi referral progress email: " + err.message);
   }
 }
 
