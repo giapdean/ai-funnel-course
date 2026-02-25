@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Bao Cao Chien Dich</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0a0f;
+            color: #e4e4e7;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #ff3366, #ff7733);
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: -0.3px;
+        }
+
+        .header p {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 4px;
+        }
+
+        /* Container */
+        .container {
+            padding: 12px;
+        }
+
+        /* Funnel Cards */
+        .funnel-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .metric-card {
+            flex: 1;
+            background: #18181b;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            padding: 12px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .metric-card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .metric-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 12px var(--accent-glow);
+        }
+
+        .metric-card .icon {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .metric-card .value {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .metric-card .label {
+            font-size: 10px;
+            color: #71717a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        .card-traffic {
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.2);
+        }
+
+        .card-traffic .value {
+            color: #3b82f6;
+        }
+
+        .card-lead {
+            --accent: #22c55e;
+            --accent-glow: rgba(34, 197, 94, 0.2);
+        }
+
+        .card-lead .value {
+            color: #22c55e;
+        }
+
+        .card-order {
+            --accent: #f59e0b;
+            --accent-glow: rgba(245, 158, 11, 0.2);
+        }
+
+        .card-order .value {
+            color: #f59e0b;
+        }
+
+        /* Conversion arrows */
+        .conversion-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+
+        .conv-arrow {
+            color: #3f3f46;
+            font-size: 11px;
+        }
+
+        .conv-rate {
+            background: #27272a;
+            border-radius: 6px;
+            padding: 3px 8px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #a1a1aa;
+        }
+
+        .conv-rate span {
+            color: #ff3366;
+        }
+
+        /* Detail Panel */
+        .detail-panel {
+            background: #18181b;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .detail-panel.show {
+            display: block;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .panel-header {
+            padding: 14px 16px 8px;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .panel-body {
+            padding: 0 16px 14px;
+        }
+
+        /* Pie Chart (CSS) */
+        .pie-wrap {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .pie {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .pie-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #18181b;
+            border-radius: 50%;
+        }
+
+        .legend {
+            flex: 1;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .legend-item .pct {
+            color: #71717a;
+            margin-left: auto;
+            font-size: 10px;
+        }
+
+        /* Source Table */
+        .source-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .source-table th {
+            text-align: left;
+            font-size: 10px;
+            color: #71717a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .source-table td {
+            font-size: 12px;
+            padding: 7px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .source-table td:last-child {
+            text-align: right;
+        }
+
+        .source-table .bar-cell {
+            width: 50%;
+        }
+
+        .bar-bg {
+            background: #27272a;
+            border-radius: 3px;
+            height: 6px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Order split */
+        .order-split {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .split-card {
+            flex: 1;
+            background: #27272a;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .split-card .split-val {
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        .split-card .split-label {
+            font-size: 10px;
+            color: #71717a;
+            margin-top: 2px;
+        }
+
+        .split-paid .split-val {
+            color: #f59e0b;
+        }
+
+        .split-free .split-val {
+            color: #22c55e;
+        }
+
+        /* Referral drill-down */
+        .ref-btn {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #22c55e;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+
+        .ref-btn:hover {
+            border-color: #22c55e;
+        }
+
+        .ref-list {
+            margin-top: 8px;
+            display: none;
+        }
+
+        .ref-list.show {
+            display: block;
+        }
+
+        .ref-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            font-size: 11px;
+        }
+
+        .ref-item .ref-name {
+            font-weight: 600;
+        }
+
+        .ref-item .ref-count {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 99px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #71717a;
+            font-size: 13px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #3f3f46;
+            border-top-color: #ff3366;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Reload button */
+        .reload-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, #ff3366, #ff7733);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .reload-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>Bao Cao Chien Dich</h1>
+        <p id="reportTime"></p>
+    </div>
+
+    <div class="container">
+        <div id="loadingArea" class="loading">
+            <div class="spinner"></div>
+            <p style="margin-top:10px">Dang tai du lieu...</p>
+        </div>
+
+        <div id="reportArea" style="display:none">
+            <!-- Funnel Cards -->
+            <div class="funnel-row">
+                <div class="metric-card card-traffic" onclick="togglePanel('traffic')">
+                    <div class="icon">&#x1F310;</div>
+                    <div class="value" id="trafficVal">0</div>
+                    <div class="label">Traffic</div>
+                </div>
+                <div class="metric-card card-lead" onclick="togglePanel('lead')">
+                    <div class="icon">&#x1F464;</div>
+                    <div class="value" id="leadVal">0</div>
+                    <div class="label">Lead</div>
+                </div>
+                <div class="metric-card card-order" onclick="togglePanel('order')">
+                    <div class="icon">&#x1F6D2;</div>
+                    <div class="value" id="orderVal">0</div>
+                    <div class="label">Order</div>
+                </div>
+            </div>
+
+            <!-- Conversion Rates -->
+            <div class="conversion-row">
+                <div class="conv-rate">Traffic &#x2192; Lead: <span id="convTL">0%</span></div>
+                <div class="conv-rate">Lead &#x2192; Order: <span id="convLO">0%</span></div>
+            </div>
+
+            <!-- Traffic Detail -->
+            <div class="detail-panel" id="panel-traffic">
+                <div class="panel-header" style="color:#3b82f6">&#x1F310; Chi Tiet Traffic</div>
+                <div class="panel-body">
+                    <div class="pie-wrap">
+                        <div class="pie" id="pieTraffic">
+                            <div class="pie-center"></div>
+                        </div>
+                        <div class="legend" id="legendTraffic"></div>
+                    </div>
+                    <table class="source-table" id="tableTraffic">
+                        <thead>
+                            <tr>
+                                <th>Nguon</th>
+                                <th class="bar-cell"></th>
+                                <th>SL</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Lead Detail -->
+            <div class="detail-panel" id="panel-lead">
+                <div class="panel-header" style="color:#22c55e">&#x1F464; Chi Tiet Lead</div>
+                <div class="panel-body">
+                    <div class="pie-wrap">
+                        <div class="pie" id="pieLead">
+                            <div class="pie-center"></div>
+                        </div>
+                        <div class="legend" id="legendLead"></div>
+                    </div>
+                    <table class="source-table" id="tableLead">
+                        <thead>
+                            <tr>
+                                <th>Nguon</th>
+                                <th class="bar-cell"></th>
+                                <th>SL</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                    <button class="ref-btn" onclick="loadReferrals()">Xem chi tiet Referral &#x2192;</button>
+                    <div class="ref-list" id="refList"></div>
+                </div>
+            </div>
+
+            <!-- Order Detail -->
+            <div class="detail-panel" id="panel-order">
+                <div class="panel-header" style="color:#f59e0b">&#x1F6D2; Chi Tiet Order</div>
+                <div class="panel-body">
+                    <div class="order-split">
+                        <div class="split-card split-paid">
+                            <div class="split-val" id="orderPaid">0</div>
+                            <div class="split-label">Tra phi</div>
+                        </div>
+                        <div class="split-card split-free">
+                            <div class="split-val" id="orderFree">0</div>
+                            <div class="split-label">Mien phi</div>
+                        </div>
+                    </div>
+                    <div class="pie-wrap">
+                        <div class="pie" id="pieOrder">
+                            <div class="pie-center"></div>
+                        </div>
+                        <div class="legend" id="legendOrder"></div>
+                    </div>
+                    <table class="source-table" id="tableOrder">
+                        <thead>
+                            <tr>
+                                <th>Nguon</th>
+                                <th class="bar-cell"></th>
+                                <th>SL</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <button class="reload-btn" onclick="loadReport()">&#x21BB; Tai lai du lieu</button>
+        </div>
+    </div>
+
+    <script>
+        var COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16'];
+
+        function fmt(n) {
+            return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        function togglePanel(type) {
+            var panels = document.querySelectorAll('.detail-panel');
+            var cards = document.querySelectorAll('.metric-card');
+            var panel = document.getElementById('panel-' + type);
+            var isShown = panel.classList.contains('show');
+
+            panels.forEach(function (p) { p.classList.remove('show'); });
+            cards.forEach(function (c) { c.classList.remove('active'); });
+
+            if (!isShown) {
+                panel.classList.add('show');
+                document.querySelector('.card-' + type).classList.add('active');
+            }
+        }
+
+        function buildPieChart(containerId, sources, total) {
+            var pie = document.getElementById(containerId);
+            var sorted = Object.entries(sources).sort(function (a, b) { return b[1] - a[1]; });
+            var gradParts = [];
+            var cumPct = 0;
+
+            sorted.forEach(function (entry, i) {
+                var pct = total > 0 ? (entry[1] / total) * 100 : 0;
+                var color = COLORS[i % COLORS.length];
+                gradParts.push(color + ' ' + cumPct + '% ' + (cumPct + pct) + '%');
+                cumPct += pct;
+            });
+
+            pie.style.background = 'conic-gradient(' + gradParts.join(', ') + ')';
+        }
+
+        function buildLegend(legendId, sources, total) {
+            var el = document.getElementById(legendId);
+            var sorted = Object.entries(sources).sort(function (a, b) { return b[1] - a[1]; });
+            var html = '';
+            sorted.forEach(function (entry, i) {
+                var pct = total > 0 ? ((entry[1] / total) * 100).toFixed(1) : 0;
+                var color = COLORS[i % COLORS.length];
+                html += '<div class="legend-item">'
+                    + '<div class="legend-dot" style="background:' + color + '"></div>'
+                    + '<span>' + entry[0] + '</span>'
+                    + '<span class="pct">' + pct + '%</span></div>';
+            });
+            el.innerHTML = html;
+        }
+
+        function buildTable(tableId, sources, total, barColor) {
+            var tbody = document.querySelector('#' + tableId + ' tbody');
+            var sorted = Object.entries(sources).sort(function (a, b) { return b[1] - a[1]; });
+            var maxVal = sorted.length > 0 ? sorted[0][1] : 1;
+            var html = '';
+
+            sorted.forEach(function (entry, i) {
+                var pct = total > 0 ? ((entry[1] / total) * 100).toFixed(1) : 0;
+                var barW = maxVal > 0 ? ((entry[1] / maxVal) * 100) : 0;
+                var color = COLORS[i % COLORS.length];
+                html += '<tr><td>' + entry[0] + '</td>'
+                    + '<td class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:' + barW + '%;background:' + color + '"></div></div></td>'
+                    + '<td>' + fmt(entry[1]) + '</td>'
+                    + '<td style="color:#71717a">' + pct + '%</td></tr>';
+            });
+            tbody.innerHTML = html;
+        }
+
+        function loadReport() {
+            document.getElementById('loadingArea').style.display = 'block';
+            document.getElementById('reportArea').style.display = 'none';
+
+            google.script.run.withSuccessHandler(function (data) {
+                document.getElementById('loadingArea').style.display = 'none';
+                document.getElementById('reportArea').style.display = 'block';
+
+                // Timestamp
+                var now = new Date();
+                document.getElementById('reportTime').textContent = 'Cap nhat: ' + now.toLocaleString('vi-VN');
+
+                // Metric values
+                document.getElementById('trafficVal').textContent = fmt(data.traffic.total);
+                document.getElementById('leadVal').textContent = fmt(data.leads.total);
+                document.getElementById('orderVal').textContent = fmt(data.orders.total);
+                document.getElementById('convTL').textContent = data.conversions.trafficToLead + '%';
+                document.getElementById('convLO').textContent = data.conversions.leadToOrder + '%';
+
+                // Order split
+                document.getElementById('orderPaid').textContent = fmt(data.orders.paid);
+                document.getElementById('orderFree').textContent = fmt(data.orders.free);
+
+                // Traffic chart
+                if (data.traffic.total > 0) {
+                    buildPieChart('pieTraffic', data.traffic.sources, data.traffic.total);
+                    buildLegend('legendTraffic', data.traffic.sources, data.traffic.total);
+                    buildTable('tableTraffic', data.traffic.sources, data.traffic.total, '#3b82f6');
+                }
+
+                // Lead chart
+                if (data.leads.total > 0) {
+                    buildPieChart('pieLead', data.leads.sources, data.leads.total);
+                    buildLegend('legendLead', data.leads.sources, data.leads.total);
+                    buildTable('tableLead', data.leads.sources, data.leads.total, '#22c55e');
+                }
+
+                // Order chart
+                if (data.orders.total > 0) {
+                    buildPieChart('pieOrder', data.orders.sources, data.orders.total);
+                    buildLegend('legendOrder', data.orders.sources, data.orders.total);
+                    buildTable('tableOrder', data.orders.sources, data.orders.total, '#f59e0b');
+                }
+
+            }).withFailureHandler(function (err) {
+                document.getElementById('loadingArea').innerHTML = '<p style="color:#ef4444">Loi: ' + err.message + '</p>';
+            }).getReportData();
+        }
+
+        function loadReferrals() {
+            var list = document.getElementById('refList');
+            if (list.classList.contains('show')) {
+                list.classList.remove('show');
+                return;
+            }
+            list.innerHTML = '<p style="color:#71717a;font-size:11px;padding:8px 0">Dang tai...</p>';
+            list.classList.add('show');
+
+            google.script.run.withSuccessHandler(function (data) {
+                if (!data || data.length === 0) {
+                    list.innerHTML = '<p style="color:#71717a;font-size:11px;padding:8px 0">Chua co referral nao</p>';
+                    return;
+                }
+                var html = '';
+                data.forEach(function (r) {
+                    html += '<div class="ref-item">'
+                        + '<div><span class="ref-name">' + r.name + '</span><br>'
+                        + '<span style="color:#71717a;font-size:10px">' + r.email + '</span></div>'
+                        + '<div class="ref-count">' + r.referralCount + ' ref</div></div>';
+                });
+                list.innerHTML = html;
+            }).withFailureHandler(function (err) {
+                list.innerHTML = '<p style="color:#ef4444;font-size:11px">Loi: ' + err.message + '</p>';
+            }).getReferralDetails();
+        }
+
+        // Auto-load on open
+        loadReport();
+    </script>
+</body>
+
+</html>

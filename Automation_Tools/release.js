@@ -34,8 +34,14 @@ if (!deploymentId) {
 console.log(`📌 Deployment ID hiện tại: ${deploymentId}`);
 
 // 3. Copy source code sang thư mục deploy_gas
-console.log('📂 Đang copy Code.gs (Source_Code -> deploy_gas)...');
+console.log('\ud83d\udcc2 Đang copy Code.gs + Report.html (Source_Code -> deploy_gas)...');
 fs.copyFileSync(SRC_GAS_SCRIPT, DEST_GAS_SCRIPT);
+// Copy Report.html (sidebar) nếu tồn tại
+const SRC_REPORT = path.join(ROOT_DIR, 'Source_Code', 'Google_Apps_Script', 'Report.html');
+const DEST_REPORT = path.join(DEPLOY_DIR, 'Report.html');
+if (fs.existsSync(SRC_REPORT)) {
+    fs.copyFileSync(SRC_REPORT, DEST_REPORT);
+}
 
 // 4. Chạy Clasp Push và Deploy cập nhật phiên bản
 console.log('☁️ Đang đẩy code lên Google Apps Script (clasp push)...');

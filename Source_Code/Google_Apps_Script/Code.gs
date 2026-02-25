@@ -77,7 +77,7 @@ function generatePaymentCode(email) {
 // MAIN ENDPOINT
 // ============================================================
 function doPost(e) {
-  // ⚡ Luôn bọc trong try-catch để tránh CORS Error (Bug #14, #15)
+  // Luon boc trong try-catch de tranh CORS Error (Bug #14, #15)
   try {
     const payload = JSON.parse(e.postData.contents); // (Bug #9 fix)
     const action = payload.action;
@@ -92,6 +92,8 @@ function doPost(e) {
       return handleSepayWebhook(payload);
     } else if (action === "verify_fb_share") {
       return handleVerifyFbShare(payload);
+    } else if (action === "track_visit") {
+      return handleTrackVisit(payload);
     } else {
       return respond({ success: false, error: "Unknown action" });
     }
@@ -194,10 +196,11 @@ function handleRegister(data) {
   const id = Utilities.getUuid();
   const timestamp = new Date();
 
-  // Ghi vào Sheet
+  // Ghi vao Sheet (them Source o cot thu 10)
+  var source = (data.source || "Direct").trim();
   sheet.appendRow([
     id, timestamp, name, email, phone,
-    refCode, referredBy, "Pending", false
+    refCode, referredBy, "Pending", false, source
   ]);
 
   // Nếu được giới thiệu, check Referral
@@ -642,6 +645,192 @@ function sendReferralProgressEmail(toEmail, name, currentCount, refCode) {
   } catch (err) {
     Logger.log("L\u1ed7i g\u1eedi referral progress email: " + err.message);
   }
+}
+
+// ============================================================
+// MENU: Custom Menu khi mo Google Sheet
+// ============================================================
+function onOpen() {
+  SpreadsheetApp.getUi()
+    .createMenu("Bao Cao")
+    .addItem("Bao Cao Chien Dich", "showCampaignReport")
+    .addToUi();
+}
+
+// ============================================================
+// SETUP: Tao tab PageViews (chay 1 lan)
+// ============================================================
+function setupPageViewsSheet() {
+  var ss = SpreadsheetApp.openById(CONFIG.SPREADSHEET_ID);
+  var existing = ss.getSheetByName("PageViews");
+  if (existing) {
+    Logger.log("Tab PageViews da ton tai");
+    return;
+  }
+  var sheet = ss.insertSheet("PageViews");
+  sheet.appendRow(["ID", "Timestamp", "Source", "Medium", "Campaign", "UserAgent", "Referrer", "Page"]);
+  sheet.setFrozenRows(1);
+  Logger.log("Tao tab PageViews thanh cong");
+}
+
+// ============================================================
+// TRACK VISIT: Ghi nhan luot truy cap website
+// ============================================================
+function handleTrackVisit(data) {
+  var sheet = getSheet("PageViews");
+  if (!sheet) {
+    setupPageViewsSheet();
+    sheet = getSheet("PageViews");
+  }
+
+  var id = Utilities.getUuid();
+  var source = (data.source || "Direct").trim();
+  var medium = (data.medium || "").trim();
+  var campaign = (data.campaign || "").trim();
+  var userAgent = (data.userAgent || "").trim();
+  var referrer = (data.referrer || "").trim();
+  var page = (data.page || "/").trim();
+
+  sheet.appendRow([id, new Date(), source, medium, campaign, userAgent, referrer, page]);
+
+  return respond({ success: true });
+}
+
+// ============================================================
+// CAMPAIGN REPORT: Mo sidebar bao cao
+// ============================================================
+function showCampaignReport() {
+  var html = HtmlService.createHtmlOutputFromFile("Report")
+    .setTitle("Bao Cao Chien Dich")
+    .setWidth(420);
+  SpreadsheetApp.getUi().showSidebar(html);
+}
+
+/**
+ * Lay du lieu bao cao tong hop: Traffic, Lead, Order
+ */
+function getReportData() {
+  var result = {
+    traffic: { total: 0, sources: {} },
+    leads: { total: 0, sources: {} },
+    orders: { total: 0, free: 0, paid: 0, sources: {} },
+    conversions: { trafficToLead: 0, leadToOrder: 0 }
+  };
+
+  // --- TRAFFIC (PageViews) ---
+  var pvSheet = getSheet("PageViews");
+  if (pvSheet && pvSheet.getLastRow() > 1) {
+    var pvData = pvSheet.getDataRange().getValues();
+    var pvHeaders = pvData[0];
+    var srcCol = pvHeaders.indexOf("Source");
+
+    for (var i = 1; i < pvData.length; i++) {
+      var src = String(pvData[i][srcCol] || "Direct").trim();
+      if (!src) src = "Direct";
+      result.traffic.total++;
+      result.traffic.sources[src] = (result.traffic.sources[src] || 0) + 1;
+    }
+  }
+
+  // --- LEADS & ORDERS (Users) ---
+  var userSheet = getSheet("Users");
+  if (userSheet && userSheet.getLastRow() > 1) {
+    var uData = userSheet.getDataRange().getValues();
+    var uHeaders = uData[0];
+    var statusCol = uHeaders.indexOf("Status");
+    var refByCol = uHeaders.indexOf("ReferredBy");
+    // Source co the o cot 10 (index 9) hoac co ten "Source"
+    var sourceCol = uHeaders.indexOf("Source");
+    if (sourceCol === -1) sourceCol = 9; // fallback cot thu 10
+
+    for (var j = 1; j < uData.length; j++) {
+      var row = uData[j];
+      var status = String(row[statusCol] || "").trim().toLowerCase();
+      var referredBy = String(row[refByCol] || "").trim();
+      var userSource = String(row[sourceCol] || "Direct").trim();
+      if (!userSource) userSource = "Direct";
+
+      // Moi dong trong Users = 1 lead
+      result.leads.total++;
+      result.leads.sources[userSource] = (result.leads.sources[userSource] || 0) + 1;
+
+      // Order = Paid hoac Free
+      if (status === "paid" || status === "free") {
+        result.orders.total++;
+        result.orders.sources[userSource] = (result.orders.sources[userSource] || 0) + 1;
+        if (status === "paid") {
+          result.orders.paid++;
+        } else {
+          result.orders.free++;
+        }
+      }
+    }
+  }
+
+  // --- CONVERSION RATES ---
+  if (result.traffic.total > 0) {
+    result.conversions.trafficToLead = Math.round((result.leads.total / result.traffic.total) * 1000) / 10;
+  }
+  if (result.leads.total > 0) {
+    result.conversions.leadToOrder = Math.round((result.orders.total / result.leads.total) * 1000) / 10;
+  }
+
+  return result;
+}
+
+/**
+ * Lay chi tiet danh sach Referral (drill-down)
+ */
+function getReferralDetails() {
+  var userSheet = getSheet("Users");
+  if (!userSheet || userSheet.getLastRow() <= 1) return [];
+
+  var data = userSheet.getDataRange().getValues();
+  var headers = data[0];
+  var nameCol = headers.indexOf("FullName");
+  var emailCol = headers.indexOf("Email");
+  var refCodeCol = headers.indexOf("RefCode");
+  var refByCol = headers.indexOf("ReferredBy");
+  var statusCol = headers.indexOf("Status");
+
+  // Dem so nguoi duoc gioi thieu boi moi RefCode
+  var refMap = {}; // { refCode: { name, email, count, status } }
+
+  // Buoc 1: Tim tat ca referrers (nguoi co RefCode)
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i];
+    var refCode = String(row[refCodeCol] || "").trim();
+    if (refCode) {
+      refMap[refCode] = {
+        name: String(row[nameCol] || ""),
+        email: String(row[emailCol] || ""),
+        refCode: refCode,
+        status: String(row[statusCol] || ""),
+        referralCount: 0
+      };
+    }
+  }
+
+  // Buoc 2: Dem so nguoi duoc gioi thieu
+  for (var k = 1; k < data.length; k++) {
+    var referredBy = String(data[k][refByCol] || "").trim();
+    if (referredBy && refMap[referredBy]) {
+      refMap[referredBy].referralCount++;
+    }
+  }
+
+  // Buoc 3: Chi tra ve nhung nguoi co it nhat 1 referral
+  var results = [];
+  for (var code in refMap) {
+    if (refMap[code].referralCount > 0) {
+      results.push(refMap[code]);
+    }
+  }
+
+  // Sap xep theo so luong referral giam dan
+  results.sort(function(a, b) { return b.referralCount - a.referralCount; });
+
+  return results;
 }
 
 // ============================================================
