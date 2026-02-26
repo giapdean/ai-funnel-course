@@ -752,12 +752,28 @@ function getReportData() {
     var pvData = pvSheet.getDataRange().getValues();
     var pvHeaders = pvData[0];
     var srcCol = pvHeaders.indexOf("Source");
+    var clickFromCol = pvHeaders.indexOf("ClickFrom");
+
+    result.traffic.clickFromSources = {};
 
     for (var i = 1; i < pvData.length; i++) {
       var src = String(pvData[i][srcCol] || "Direct").trim();
       if (!src) src = "Direct";
       result.traffic.total++;
       result.traffic.sources[src] = (result.traffic.sources[src] || 0) + 1;
+
+      // Aggregate ClickFrom (extract domain from URL)
+      if (clickFromCol >= 0) {
+        var clickFromRaw = String(pvData[i][clickFromCol] || "").trim();
+        if (clickFromRaw) {
+          var domain = clickFromRaw;
+          try {
+            // Extract domain: "https://l.facebook.com/xxx" -> "l.facebook.com"
+            domain = clickFromRaw.replace(/^https?:\/\//, "").split("/")[0];
+          } catch(e) {}
+          result.traffic.clickFromSources[domain] = (result.traffic.clickFromSources[domain] || 0) + 1;
+        }
+      }
     }
   }
 

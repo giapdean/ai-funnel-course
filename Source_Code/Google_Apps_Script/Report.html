@@ -468,6 +468,30 @@
                         </thead>
                         <tbody></tbody>
                     </table>
+
+                    <!-- Nguon Click section -->
+                    <div id="clickFromSection"
+                        style="display:none; margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.06);">
+                        <div style="font-size:14px; font-weight:700; color:#06b6d4; margin-bottom:12px;">&#x1F517; Nguon
+                            Click (Domain)</div>
+                        <div class="pie-wrap">
+                            <div class="pie" id="pieClickFrom">
+                                <div class="pie-center"></div>
+                            </div>
+                            <div class="legend" id="legendClickFrom"></div>
+                        </div>
+                        <table class="source-table" id="tableClickFrom">
+                            <thead>
+                                <tr>
+                                    <th>Domain</th>
+                                    <th class="bar-cell"></th>
+                                    <th>SL</th>
+                                    <th>%</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -634,6 +658,16 @@
                     buildPieChart('pieTraffic', data.traffic.sources, data.traffic.total);
                     buildLegend('legendTraffic', data.traffic.sources, data.traffic.total);
                     buildTable('tableTraffic', data.traffic.sources, data.traffic.total, '#3b82f6');
+                }
+
+                // ClickFrom chart (Nguon Click)
+                if (data.traffic.clickFromSources && Object.keys(data.traffic.clickFromSources).length > 0) {
+                    var cfTotal = 0;
+                    Object.values(data.traffic.clickFromSources).forEach(function (v) { cfTotal += v; });
+                    document.getElementById('clickFromSection').style.display = 'block';
+                    buildPieChart('pieClickFrom', data.traffic.clickFromSources, cfTotal);
+                    buildLegend('legendClickFrom', data.traffic.clickFromSources, cfTotal);
+                    buildTable('tableClickFrom', data.traffic.clickFromSources, cfTotal, '#06b6d4');
                 }
 
                 // Lead chart

@@ -1077,11 +1077,14 @@ GAS Kit là bộ 6 AI Skill chuyên dụng giúp bạn lên plan, viết code, s
         const referrer = urlParams.get('ref') || "";
 
         function detectSource() {
-            // 1. UTM source luôn ưu tiên cao nhất (vì người quảng cáo chủ động gắn)
+            // 1. UTM source luôn ưu tiên cao nhất
             var utmSrc = urlParams.get('utm_source');
             if (utmSrc) return utmSrc.charAt(0).toUpperCase() + utmSrc.slice(1).toLowerCase();
 
-            // 2. Kiểm tra document.referrer để xác định kênh traffic thực tế
+            // 2. Nếu có ref param -> luôn là Referral (kênh click thực tế lưu ở ClickFrom)
+            if (referrer) return 'Referral';
+
+            // 3. Không có ref -> detect từ document.referrer
             var docRef = document.referrer || '';
             if (docRef.includes('facebook.com') || docRef.includes('fb.com')) return 'Facebook';
             if (docRef.includes('google.com')) return 'Google';
@@ -1089,9 +1092,6 @@ GAS Kit là bộ 6 AI Skill chuyên dụng giúp bạn lên plan, viết code, s
             if (docRef.includes('tiktok.com')) return 'TikTok';
             if (docRef.includes('youtube.com')) return 'YouTube';
             if (docRef) return 'Other';
-
-            // 3. Nếu có ref param nhưng không detect được kênh -> Referral (link chia sẻ trực tiếp)
-            if (referrer) return 'Referral';
 
             return 'Direct';
         }
