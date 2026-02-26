@@ -668,7 +668,7 @@ function setupPageViewsSheet() {
     return;
   }
   var sheet = ss.insertSheet("PageViews");
-  sheet.appendRow(["ID", "Timestamp", "Source", "Medium", "Campaign", "RefCode", "UserAgent", "Referrer", "Page"]);
+  sheet.appendRow(["ID", "Timestamp", "Source", "Medium", "Campaign", "RefCode", "UserAgent", "RefName", "ClickFrom", "Page"]);
   sheet.setFrozenRows(1);
   Logger.log("Tao tab PageViews thanh cong");
 }
@@ -690,10 +690,32 @@ function handleTrackVisit(data) {
     var campaign = (data.campaign || "").trim();
     var refCode = (data.refCode || "").trim();
     var userAgent = (data.userAgent || "").trim();
-    var referrer = (data.referrer || "").trim();
+    var clickFrom = (data.referrer || "").trim();
     var page = (data.page || "/").trim();
 
-    sheet.appendRow([id, new Date(), source, medium, campaign, refCode, userAgent, referrer, page]);
+    // Lookup ten nguoi gioi thieu tu Users sheet bang RefCode
+    var refName = "";
+    if (refCode) {
+      try {
+        var userSheet = getSheet("Users");
+        if (userSheet && userSheet.getLastRow() > 1) {
+          var uData = userSheet.getDataRange().getValues();
+          var uHeaders = uData[0];
+          var rcCol = uHeaders.indexOf("RefCode");
+          var fnCol = uHeaders.indexOf("FullName");
+          for (var i = 1; i < uData.length; i++) {
+            if (String(uData[i][rcCol]).trim() === refCode) {
+              refName = String(uData[i][fnCol] || "").trim();
+              break;
+            }
+          }
+        }
+      } catch (e) {
+        Logger.log("RefName lookup error: " + e.toString());
+      }
+    }
+
+    sheet.appendRow([id, new Date(), source, medium, campaign, refCode, userAgent, refName, clickFrom, page]);
     Logger.log("Tracked visit from: " + source);
 
     return respond({ success: true });
