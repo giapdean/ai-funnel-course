@@ -668,7 +668,7 @@ function setupPageViewsSheet() {
     return;
   }
   var sheet = ss.insertSheet("PageViews");
-  sheet.appendRow(["ID", "Timestamp", "Source", "Medium", "Campaign", "UserAgent", "Referrer", "Page"]);
+  sheet.appendRow(["ID", "Timestamp", "Source", "Medium", "Campaign", "RefCode", "UserAgent", "Referrer", "Page"]);
   sheet.setFrozenRows(1);
   Logger.log("Tao tab PageViews thanh cong");
 }
@@ -688,11 +688,12 @@ function handleTrackVisit(data) {
     var source = (data.source || "Direct").trim();
     var medium = (data.medium || "").trim();
     var campaign = (data.campaign || "").trim();
+    var refCode = (data.refCode || "").trim();
     var userAgent = (data.userAgent || "").trim();
     var referrer = (data.referrer || "").trim();
     var page = (data.page || "/").trim();
 
-    sheet.appendRow([id, new Date(), source, medium, campaign, userAgent, referrer, page]);
+    sheet.appendRow([id, new Date(), source, medium, campaign, refCode, userAgent, referrer, page]);
     Logger.log("Tracked visit from: " + source);
 
     return respond({ success: true });
