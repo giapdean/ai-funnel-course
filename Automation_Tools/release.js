@@ -6,7 +6,7 @@ const shell = require('shelljs');
 const ROOT_DIR = path.join(__dirname, '..');
 const PROJECT_CONFIG_PATH = path.join(ROOT_DIR, 'project.config.json');
 const SRC_GAS_SCRIPT = path.join(ROOT_DIR, 'Source_Code', 'Google_Apps_Script', 'Code.gs');
-const DEST_GAS_SCRIPT = path.join(ROOT_DIR, 'deploy_gas', 'Code.gs');
+const DEST_GAS_SCRIPT = path.join(ROOT_DIR, 'deploy_gas', 'Code.js');
 const DEPLOY_DIR = path.join(ROOT_DIR, 'deploy_gas');
 
 console.log('🚀 Bắt đầu quá trình Deploy Google Apps Script...');

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -854,98 +854,99 @@
 
     <script>
         // Mảng màu gradient đẹp mắt cho biểu đồ
-        const CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#f43f5e', '#84cc16'];
-        const SECONDARY_COLORS = ['#06b6d4', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#10b981', '#3b82f6', '#84cc16'];
+        var CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#f43f5e', '#84cc16'];
+        var SECONDARY_COLORS = ['#06b6d4', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#10b981', '#3b82f6', '#84cc16'];
 
         function fmt(n) {
             return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
 
         function togglePanel(type) {
-            const panels = document.querySelectorAll('.detail-panel');
-            const cards = document.querySelectorAll('.metric-card');
-            const targetPanel = document.getElementById('panel-' + type);
-            const targetCard = document.querySelector('.card-' + type);
+            var panels = document.querySelectorAll('.detail-panel');
+            var cards = document.querySelectorAll('.metric-card');
+            var targetPanel = document.getElementById('panel-' + type);
+            var targetCard = document.querySelector('.card-' + type);
 
-            const isShown = targetPanel.classList.contains('show');
+            var isShown = targetPanel.classList.contains('show');
 
             // Reset all
-            panels.forEach(p => p.classList.remove('show'));
-            cards.forEach(c => c.classList.remove('active'));
+            panels.forEach(function (p) { p.classList.remove('show'); });
+            cards.forEach(function (c) { c.classList.remove('active'); });
 
             if (!isShown) {
                 targetPanel.classList.add('show');
                 targetCard.classList.add('active');
 
                 // Trigger animation for progress bars inside the opened panel
-                setTimeout(() => {
-                    const bars = targetPanel.querySelectorAll('.bar-fill');
-                    bars.forEach(bar => {
+                setTimeout(function () {
+                    var bars = targetPanel.querySelectorAll('.bar-fill');
+                    bars.forEach(function (bar) {
                         bar.style.width = bar.getAttribute('data-width');
                     });
                 }, 50);
             }
         }
 
-        function buildPieChart(containerId, sources, total, colorScheme = CHART_COLORS) {
-            const pie = document.getElementById(containerId);
-            const totalLabel = document.getElementById(containerId + 'Total');
+        function buildPieChart(containerId, sources, total, colorScheme) {
+            colorScheme = colorScheme || CHART_COLORS;
+            var pie = document.getElementById(containerId);
+            var totalLabel = document.getElementById(containerId + 'Total');
             if (totalLabel) totalLabel.textContent = fmt(total);
 
-            const sorted = Object.entries(sources).sort((a, b) => b[1] - a[1]);
-            let gradParts = [];
-            let cumPct = 0;
+            var sorted = Object.entries(sources).sort(function (a, b) { return b[1] - a[1]; });
+            var gradParts = [];
+            var cumPct = 0;
 
-            sorted.forEach((entry, i) => {
-                const pct = total > 0 ? (entry[1] / total) * 100 : 0;
-                const color = colorScheme[i % colorScheme.length];
-                gradParts.push(`${color} ${cumPct}% ${cumPct + pct}%`);
+            sorted.forEach(function (entry, i) {
+                var pct = total > 0 ? (entry[1] / total) * 100 : 0;
+                var color = colorScheme[i % colorScheme.length];
+                gradParts.push(color + ' ' + cumPct + '% ' + (cumPct + pct) + '%');
                 cumPct += pct;
             });
 
-            pie.style.background = `conic-gradient(${gradParts.join(', ')})`;
+            pie.style.background = 'conic-gradient(' + gradParts.join(', ') + ')';
         }
 
-        function buildLegend(legendId, sources, total, colorScheme = CHART_COLORS) {
-            const el = document.getElementById(legendId);
-            const sorted = Object.entries(sources).sort((a, b) => b[1] - a[1]);
-            let html = '';
+        function buildLegend(legendId, sources, total, colorScheme) {
+            colorScheme = colorScheme || CHART_COLORS;
+            var el = document.getElementById(legendId);
+            var sorted = Object.entries(sources).sort(function (a, b) { return b[1] - a[1]; });
+            var html = '';
 
-            sorted.forEach((entry, i) => {
-                const pct = total > 0 ? ((entry[1] / total) * 100).toFixed(1) : 0;
-                const color = colorScheme[i % colorScheme.length];
-                html += `
-                    <div class="legend-item">
-                        <div class="legend-dot" style="background:${color}; color:${color}"></div>
-                        <span style="color:#d4d4d8">${entry[0]}</span>
-                        <span class="pct">${pct}%</span>
-                    </div>`;
+            sorted.forEach(function (entry, i) {
+                var pct = total > 0 ? ((entry[1] / total) * 100).toFixed(1) : 0;
+                var color = colorScheme[i % colorScheme.length];
+                html += '<div class="legend-item">' +
+                    '<div class="legend-dot" style="background:' + color + '; color:' + color + '"></div>' +
+                    '<span style="color:#d4d4d8">' + entry[0] + '</span>' +
+                    '<span class="pct">' + pct + '%</span>' +
+                    '</div>';
             });
             el.innerHTML = html;
         }
 
-        function buildTable(tableId, sources, total, colorScheme = CHART_COLORS) {
-            const tbody = document.querySelector(`#${tableId} tbody`);
-            const sorted = Object.entries(sources).sort((a, b) => b[1] - a[1]);
-            const maxVal = sorted.length > 0 ? sorted[0][1] : 1;
-            let html = '';
+        function buildTable(tableId, sources, total, colorScheme) {
+            colorScheme = colorScheme || CHART_COLORS;
+            var tbody = document.querySelector('#' + tableId + ' tbody');
+            var sorted = Object.entries(sources).sort(function (a, b) { return b[1] - a[1]; });
+            var maxVal = sorted.length > 0 ? sorted[0][1] : 1;
+            var html = '';
 
-            sorted.forEach((entry, i) => {
-                const pct = total > 0 ? ((entry[1] / total) * 100).toFixed(1) : 0;
-                const barW = maxVal > 0 ? ((entry[1] / maxVal) * 100) : 0;
-                const color = colorScheme[i % colorScheme.length];
+            sorted.forEach(function (entry, i) {
+                var pct = total > 0 ? ((entry[1] / total) * 100).toFixed(1) : 0;
+                var barW = maxVal > 0 ? ((entry[1] / maxVal) * 100) : 0;
+                var color = colorScheme[i % colorScheme.length];
 
-                html += `
-                    <tr>
-                        <td>${entry[0]}</td>
-                        <td class="bar-cell">
-                            <div class="bar-bg">
-                                <div class="bar-fill" data-width="${barW}%" style="width: 0%; background: ${color}; box-shadow: 0 0 10px ${color}"></div>
-                            </div>
-                        </td>
-                        <td>${fmt(entry[1])}</td>
-                        <td style="color:var(--text-muted)">${pct}%</td>
-                    </tr>`;
+                html += '<tr>' +
+                    '<td>' + entry[0] + '</td>' +
+                    '<td class="bar-cell">' +
+                    '<div class="bar-bg">' +
+                    '<div class="bar-fill" data-width="' + barW + '%" style="width: 0%; background: ' + color + '; box-shadow: 0 0 10px ' + color + '"></div>' +
+                    '</div>' +
+                    '</td>' +
+                    '<td>' + entry[1] + '</td>' +
+                    '<td style="color:var(--text-muted)">' + pct + '%</td>' +
+                    '</tr>';
             });
             tbody.innerHTML = html;
         }
@@ -959,7 +960,7 @@
                 document.getElementById('reportArea').style.display = 'block';
 
                 // Timestamp
-                const now = new Date();
+                var now = new Date();
                 document.getElementById('reportTime').textContent = 'Cập nhật lần cuối: ' +
                     now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' - ' +
                     now.toLocaleDateString('vi-VN');
@@ -984,10 +985,9 @@
 
                 // Render ClickFrom Chart (Nguồn Click)
                 if (data.traffic.clickFromSources && Object.keys(data.traffic.clickFromSources).length > 0) {
-                    const cfTotal = Object.values(data.traffic.clickFromSources).reduce((a, b) => a + b, 0);
+                    var cfTotal = Object.values(data.traffic.clickFromSources).reduce(function (a, b) { return a + b; }, 0);
                     document.getElementById('clickFromSection').style.display = 'block';
 
-                    // Sử dụng mảng SECONDARY_COLORS cho phần Nguồn Click để đổi vị trí màu cho đỡ trùng lặp
                     buildPieChart('pieClickFrom', data.traffic.clickFromSources, cfTotal, SECONDARY_COLORS);
                     buildLegend('legendClickFrom', data.traffic.clickFromSources, cfTotal, SECONDARY_COLORS);
                     buildTable('tableClickFrom', data.traffic.clickFromSources, cfTotal, SECONDARY_COLORS);
@@ -1008,28 +1008,27 @@
                 }
 
                 // Mở tab đầu tiên mặc định nếu chưa tab nào mở
-                const hasActive = document.querySelector('.metric-card.active');
+                var hasActive = document.querySelector('.metric-card.active');
                 if (!hasActive) togglePanel('traffic');
 
             }).withFailureHandler(function (err) {
-                document.getElementById('loadingArea').innerHTML = `
-                    <p style="color:#ef4444; background:rgba(239,68,68,0.1); padding:16px; border-radius:8px;">
-                        Lỗi kết nối dữ liệu: ${err.message || 'Vui lòng thử lại sau'}
-                    </p>`;
+                document.getElementById('loadingArea').innerHTML =
+                    '<p style="color:#ef4444; background:rgba(239,68,68,0.1); padding:16px; border-radius:8px;">' +
+                    'Lỗi kết nối dữ liệu: ' + err.message +
+                    '</p>';
             }).getReportData();
         }
 
         function loadReferrals() {
-            const list = document.getElementById('refList');
+            var list = document.getElementById('refList');
             if (list.classList.contains('show')) {
                 list.classList.remove('show');
                 return;
             }
 
-            list.innerHTML = `
-                <div style="text-align:center; padding:12px;">
-                    <div class="spinner" style="width:20px; height:20px; border-width:2px;"></div>
-                </div>`;
+            list.innerHTML = '<div style="text-align:center; padding:12px;">' +
+                '<div class="spinner" style="width:20px; height:20px; border-width:2px;"></div>' +
+                '</div>';
             list.classList.add('show');
 
             google.script.run.withSuccessHandler(function (data) {
@@ -1037,20 +1036,19 @@
                     list.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:12px; padding:12px;">Chưa có dữ liệu referral.</p>';
                     return;
                 }
-                let html = '';
-                data.forEach(r => {
-                    html += `
-                        <div class="ref-item">
-                            <div>
-                                <div class="ref-name">${r.name}</div>
-                                <div class="ref-email">${r.email}</div>
-                            </div>
-                            <div class="ref-count">${r.referralCount} giới thiệu</div>
-                        </div>`;
+                var html = '';
+                data.forEach(function (r) {
+                    html += '<div class="ref-item">' +
+                        '<div>' +
+                        '<div class="ref-name">' + (r.name || 'N/A') + '</div>' +
+                        '<div class="ref-email">' + (r.email || '') + '</div>' +
+                        '</div>' +
+                        '<div class="ref-count">' + (r.referralCount || 0) + ' giới thiệu</div>' +
+                        '</div>';
                 });
                 list.innerHTML = html;
             }).withFailureHandler(function (err) {
-                list.innerHTML = `<p style="color:#ef4444; font-size:12px; padding:12px;">Lỗi: ${err.message}</p>`;
+                list.innerHTML = '<p style="color:#ef4444; font-size:12px; padding:12px;">Lỗi: ' + err.message + '</p>';
             }).getReferralDetails();
         }
 

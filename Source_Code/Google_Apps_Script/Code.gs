@@ -198,6 +198,10 @@ function handleRegister(data) {
 
   // Ghi vao Sheet (them Source o cot thu 10)
   var source = (data.source || "Direct").trim();
+  // Nếu có ReferredBy thì Source luôn là Referral
+  if (referredBy) {
+    source = "Referral";
+  }
   sheet.appendRow([
     id, timestamp, name, email, phone,
     refCode, referredBy, "Pending", false, source
@@ -634,7 +638,20 @@ function sendReferralProgressEmail(toEmail, name, currentCount, refCode) {
     + '</table></td></tr></table>'
     + '<p style="color:#d4d4d8;font-size:15px;margin:24px 0 8px;line-height:1.7;">'
     + 'Ch\u1ec9 c\u1ea7n m\u1eddi th\u00eam <strong style="color:#ff7733;">' + remaining + ' ng\u01b0\u1eddi</strong> n\u1eefa, b\u1ea1n s\u1ebd nh\u1eadn ngay <strong style="color:#22c55e;">V\u00e9 Mi\u1ec5n Ph\u00ed</strong> tham gia kh\u00f3a h\u1ecdc! &#x1F680;</p>'
-    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Chia s\u1ebb link b\u00ean d\u01b0\u1edbi cho b\u1ea1n b\u00e8 \u0111\u1ec3 ho\u00e0n th\u00e0nh th\u1eed th\u00e1ch nh\u00e9!</p>';
+    + '<p style="color:#71717a;font-size:13px;margin:0;line-height:1.6;">Chia s\u1ebb link b\u00ean d\u01b0\u1edbi cho b\u1ea1n b\u00e8 \u0111\u1ec3 ho\u00e0n th\u00e0nh th\u1eed th\u00e1ch nh\u00e9!</p>'
+    // GAS Kit Standard CTA section
+    + '<table width="100%" cellpadding="0" cellspacing="0" style="margin-top:24px;background-color:#1a1a2e;border-radius:12px;border:1px solid rgba(255,51,102,0.2);">'
+    + '<tr><td style="padding:24px;">'
+    + '<p style="color:#ff3366;font-size:11px;margin:0 0 8px;text-transform:uppercase;letter-spacing:2px;font-weight:700;">&#x1F381; QU\u00c0 T\u1eb6NG \u0110\u1eb6C BI\u1ec6T</p>'
+    + '<p style="color:#fafafa;font-size:16px;font-weight:700;margin:0 0 8px;">Nh\u1eadn b\u1ed9 GAS Kit Standard tr\u1ecb gi\u00e1 <span style="color:#ff3366;">499.000\u0111</span> MI\u1ec4N PH\u00cd!</p>'
+    + '<p style="color:#a1a1aa;font-size:14px;margin:0 0 16px;line-height:1.6;">Ngo\u00e0i th\u1eed th\u00e1ch gi\u1edbi thi\u1ec7u, b\u1ea1n c\u00f2n c\u00f3 th\u1ec3 nh\u1eadn GAS Kit Standard b\u1eb1ng c\u00e1ch <strong style="color:#fafafa;">vi\u1ebft b\u00e0i chia s\u1ebb ch\u01b0\u01a1ng tr\u00ecnh</strong> tr\u00ean Facebook c\u00e1 nh\u00e2n. Ch\u1ec9 c\u1ea7n:</p>'
+    + '<table cellpadding="0" cellspacing="0" style="margin-bottom:12px;">'
+    + '<tr><td style="color:#d4d4d8;font-size:13px;padding:4px 0;">&#x2705; \u0110\u0103ng b\u00e0i c\u00f4ng khai tr\u00ean Facebook c\u00e1 nh\u00e2n</td></tr>'
+    + '<tr><td style="color:#d4d4d8;font-size:13px;padding:4px 0;">&#x2705; G\u1eafn link kh\u00f3a h\u1ecdc v\u00e0o b\u00e0i vi\u1ebft</td></tr>'
+    + '<tr><td style="color:#d4d4d8;font-size:13px;padding:4px 0;">&#x2705; T\u00e0i kho\u1ea3n c\u00f3 t\u1eeb 1.000 followers</td></tr>'
+    + '</table>'
+    + '<p style="color:#71717a;font-size:12px;margin:0;line-height:1.5;">Truy c\u1eadp trang kh\u00f3a h\u1ecdc, k\u00e9o xu\u1ed1ng m\u1ee5c <strong style="color:#a1a1aa;">"Nh\u1eadn GAS Kit Standard Mi\u1ec5n Ph\u00ed"</strong> \u0111\u1ec3 th\u1ef1c hi\u1ec7n nh\u00e9!</p>'
+    + '</td></tr></table>';
 
   var referralLink = siteUrl + "?ref=" + refCode;
   var html = getEmailTemplate("B\u1ea1n c\u00f3 1 Referral m\u1edbi! &#x1F525;", contentHtml, "Chia s\u1ebb link ngay", referralLink);
@@ -693,6 +710,11 @@ function handleTrackVisit(data) {
     var clickFrom = (data.referrer || "").trim();
     var page = (data.page || "/").trim();
 
+    // Nếu có RefCode thì Source luôn là Referral
+    if (refCode) {
+      source = "Referral";
+    }
+
     // Lookup ten nguoi gioi thieu tu Users sheet bang RefCode
     var refName = "";
     if (refCode) {
@@ -730,9 +752,9 @@ function handleTrackVisit(data) {
 // ============================================================
 function showCampaignReport() {
   var html = HtmlService.createHtmlOutputFromFile("Report")
-    .setTitle("Bao Cao Chien Dich")
-    .setWidth(420);
-  SpreadsheetApp.getUi().showSidebar(html);
+    .setWidth(1920)
+    .setHeight(1080);
+  SpreadsheetApp.getUi().showModalDialog(html, "Báo Cáo Chiến Dịch");
 }
 
 /**
@@ -768,10 +790,26 @@ function getReportData() {
         if (clickFromRaw) {
           var domain = clickFromRaw;
           try {
-            // Extract domain: "https://l.facebook.com/xxx" -> "l.facebook.com"
-            domain = clickFromRaw.replace(/^https?:\/\//, "").split("/")[0];
+            domain = clickFromRaw.replace(/^https?:\/\//, "").split("/")[0].toLowerCase();
           } catch(e) {}
-          result.traffic.clickFromSources[domain] = (result.traffic.clickFromSources[domain] || 0) + 1;
+          // Gop domain thanh ten nen tang chung
+          var platform = domain;
+          if (domain.indexOf("facebook.com") >= 0 || domain.indexOf("fb.com") >= 0 || domain.indexOf("fbcdn.net") >= 0) {
+            platform = "Facebook";
+          } else if (domain.indexOf("zalo.me") >= 0 || domain.indexOf("zalo.vn") >= 0) {
+            platform = "Zalo";
+          } else if (domain.indexOf("google.com") >= 0 || domain.indexOf("google.com.vn") >= 0) {
+            platform = "Google";
+          } else if (domain.indexOf("youtube.com") >= 0 || domain.indexOf("youtu.be") >= 0) {
+            platform = "YouTube";
+          } else if (domain.indexOf("tiktok.com") >= 0) {
+            platform = "TikTok";
+          } else if (domain.indexOf("instagram.com") >= 0) {
+            platform = "Instagram";
+          } else if (domain.indexOf("t.co") >= 0 || domain.indexOf("twitter.com") >= 0 || domain.indexOf("x.com") >= 0) {
+            platform = "Twitter/X";
+          }
+          result.traffic.clickFromSources[platform] = (result.traffic.clickFromSources[platform] || 0) + 1;
         }
       }
     }
