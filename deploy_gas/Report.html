@@ -4,202 +4,294 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Bao Cao Chien Dich</title>
+    <title>Báo Cáo Chiến Dịch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-main: #09090b;
+            --bg-card: #18181b;
+            --bg-hover: #27272a;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --border-color: rgba(255, 255, 255, 0.08);
+
+            --c-traffic: #3b82f6;
+            --c-traffic-glow: rgba(59, 130, 246, 0.25);
+            --c-lead: #10b981;
+            --c-lead-glow: rgba(16, 185, 129, 0.25);
+            --c-order: #f59e0b;
+            --c-order-glow: rgba(245, 158, 11, 0.25);
+
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: #0a0a0f;
-            color: #e4e4e7;
+            background: var(--bg-main);
+            color: var(--text-main);
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
+        /* --- HEADER --- */
         .header {
-            background: linear-gradient(135deg, #ff3366, #ff7733);
-            padding: 24px 24px;
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.1), rgba(255, 119, 51, 0.1));
+            border-bottom: 1px solid var(--border-color);
+            padding: 32px 24px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 100px;
+            background: #ff3366;
+            filter: blur(80px);
+            opacity: 0.3;
+            z-index: 0;
         }
 
         .header h1 {
-            font-size: 22px;
-            font-weight: 700;
+            font-size: 24px;
+            font-weight: 800;
             color: #fff;
-            letter-spacing: -0.3px;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 1;
         }
 
         .header p {
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 4px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Container */
+        /* --- CONTAINER --- */
         .container {
-            padding: 20px 24px;
+            padding: 24px;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
-        /* Funnel Cards */
+        /* --- FUNNEL CARDS --- */
         .funnel-row {
             display: flex;
             gap: 16px;
-            margin-bottom: 16px;
+            margin-bottom: 24px;
         }
 
         .metric-card {
             flex: 1;
-            background: #18181b;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
-            padding: 20px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 24px 16px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
 
         .metric-card:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-1px);
+            transform: translateY(-4px);
+            background: rgba(24, 24, 27, 0.8);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
         .metric-card.active {
             border-color: var(--accent);
-            box-shadow: 0 0 12px var(--accent-glow);
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.03), transparent);
+            box-shadow: 0 0 20px var(--accent-glow);
         }
 
-        .metric-card .icon {
-            font-size: 24px;
-            margin-bottom: 6px;
+        .metric-card.active::before {
+            opacity: 1;
+        }
+
+        .metric-card .icon-wrap {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--accent-glow);
+            color: var(--accent);
+        }
+
+        .metric-card .icon-wrap svg {
+            width: 24px;
+            height: 24px;
         }
 
         .metric-card .value {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 800;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
+            margin-bottom: 4px;
         }
 
         .metric-card .label {
-            font-size: 12px;
-            color: #71717a;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-top: 4px;
         }
 
+        /* Variables for specific cards */
         .card-traffic {
-            --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.2);
-        }
-
-        .card-traffic .value {
-            color: #3b82f6;
+            --accent: var(--c-traffic);
+            --accent-glow: var(--c-traffic-glow);
         }
 
         .card-lead {
-            --accent: #22c55e;
-            --accent-glow: rgba(34, 197, 94, 0.2);
-        }
-
-        .card-lead .value {
-            color: #22c55e;
+            --accent: var(--c-lead);
+            --accent-glow: var(--c-lead-glow);
         }
 
         .card-order {
-            --accent: #f59e0b;
-            --accent-glow: rgba(245, 158, 11, 0.2);
+            --accent: var(--c-order);
+            --accent-glow: var(--c-order-glow);
         }
 
-        .card-order .value {
-            color: #f59e0b;
-        }
-
-        /* Conversion arrows */
+        /* --- CONVERSION RATES --- */
         .conversion-row {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            margin-bottom: 12px;
-            padding: 0 4px;
-        }
-
-        .conv-arrow {
-            color: #3f3f46;
-            font-size: 11px;
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
         .conv-rate {
-            background: #27272a;
-            border-radius: 8px;
-            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 8px 16px;
             font-size: 13px;
             font-weight: 600;
-            color: #a1a1aa;
-        }
-
-        .conv-rate span {
-            color: #ff3366;
-        }
-
-        /* Detail Panel */
-        .detail-panel {
-            background: #18181b;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 12px;
-            margin-bottom: 10px;
-            overflow: hidden;
-            display: none;
-        }
-
-        .detail-panel.show {
-            display: block;
-            animation: fadeIn 0.25s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(6px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .panel-header {
-            padding: 18px 20px 10px;
-            font-size: 16px;
-            font-weight: 700;
+            color: var(--text-muted);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .panel-body {
-            padding: 0 20px 18px;
+        .conv-rate svg {
+            width: 14px;
+            height: 14px;
+            color: #71717a;
         }
 
-        /* Pie Chart (CSS) */
+        .conv-rate span {
+            color: #fff;
+            background: #27272a;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        /* --- DETAIL PANEL --- */
+        .detail-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            margin-bottom: 16px;
+            display: none;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .detail-panel.show {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .panel-header {
+            padding: 20px 24px 16px;
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .panel-header svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .panel-body {
+            padding: 20px 24px;
+        }
+
+        /* --- DONUT CHART --- */
         .pie-wrap {
             display: flex;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 12px;
+            gap: 32px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-md);
         }
 
         .pie {
-            width: 130px;
-            height: 130px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
             flex-shrink: 0;
             position: relative;
+            background: #27272a;
+            /* Fallback */
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            animation: pieGrow 1s ease-out;
+        }
+
+        @keyframes pieGrow {
+            0% {
+                transform: scale(0.8) rotate(-45deg);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
         }
 
         .pie-center {
@@ -207,14 +299,34 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 56px;
-            height: 56px;
-            background: #18181b;
+            width: 90px;
+            height: 90px;
+            background: #121215;
             border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .pie-total-val {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .pie-total-lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
         }
 
         .legend {
             flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
         }
 
         .legend-item {
@@ -222,55 +334,74 @@
             align-items: center;
             gap: 8px;
             font-size: 13px;
-            margin-bottom: 6px;
+            font-weight: 500;
         }
 
         .legend-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
             flex-shrink: 0;
+            box-shadow: 0 0 8px currentColor;
         }
 
         .legend-item .pct {
-            color: #71717a;
+            color: var(--text-muted);
             margin-left: auto;
             font-size: 12px;
+            font-weight: 600;
         }
 
-        /* Source Table */
+        /* --- MODERN TABLE --- */
         .source-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            border: 1px solid var(--border-color);
         }
 
         .source-table th {
             text-align: left;
-            font-size: 10px;
-            color: #71717a;
+            font-size: 11px;
+            color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
         }
 
         .source-table td {
             font-size: 13px;
-            padding: 8px 0;
+            font-weight: 500;
+            padding: 12px 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: background 0.2s;
+        }
+
+        .source-table tbody tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .source-table tbody tr:last-child td {
+            border-bottom: none;
         }
 
         .source-table td:last-child {
             text-align: right;
+            font-weight: 700;
         }
 
         .source-table .bar-cell {
-            width: 50%;
+            width: 40%;
         }
 
         .bar-bg {
             background: #27272a;
-            border-radius: 3px;
+            border-radius: 4px;
             height: 6px;
             width: 100%;
             overflow: hidden;
@@ -278,22 +409,25 @@
 
         .bar-fill {
             height: 100%;
-            border-radius: 3px;
-            transition: width 0.5s ease;
+            border-radius: 4px;
+            width: 0%;
+            /* Start at 0 for animation */
+            transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Order split */
+        /* --- ORDER SPLIT --- */
         .order-split {
             display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
+            gap: 12px;
+            margin-bottom: 24px;
         }
 
         .split-card {
             flex: 1;
-            background: #27272a;
-            border-radius: 8px;
-            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 16px;
             text-align: center;
         }
 
@@ -304,81 +438,118 @@
 
         .split-card .split-label {
             font-size: 12px;
-            color: #71717a;
+            font-weight: 600;
+            color: var(--text-muted);
             margin-top: 4px;
+            text-transform: uppercase;
         }
 
         .split-paid .split-val {
-            color: #f59e0b;
+            color: var(--c-order);
         }
 
         .split-free .split-val {
-            color: #22c55e;
+            color: var(--c-lead);
         }
 
-        /* Referral drill-down */
+        /* --- REFERRAL --- */
         .ref-btn {
-            background: none;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #22c55e;
-            font-size: 11px;
-            padding: 4px 10px;
-            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--c-lead);
+            font-size: 13px;
+            font-weight: 600;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
-            margin-top: 6px;
+            margin-top: 16px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
         }
 
         .ref-btn:hover {
-            border-color: #22c55e;
+            background: rgba(16, 185, 129, 0.15);
+            border-color: rgba(16, 185, 129, 0.4);
         }
 
         .ref-list {
-            margin-top: 8px;
+            margin-top: 12px;
             display: none;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-md);
+            padding: 8px 16px;
         }
 
         .ref-list.show {
             display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .ref-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 6px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-            font-size: 11px;
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+        }
+
+        .ref-item:last-child {
+            border-bottom: none;
         }
 
         .ref-item .ref-name {
             font-weight: 600;
+            font-size: 13px;
+            color: #fff;
+        }
+
+        .ref-item .ref-email {
+            color: var(--text-muted);
+            font-size: 11px;
+            margin-top: 2px;
         }
 
         .ref-item .ref-count {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 99px;
-            font-size: 10px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--c-lead);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
             font-weight: 700;
         }
 
-        /* Loading */
+        /* --- UTILITIES --- */
         .loading {
             text-align: center;
-            padding: 40px;
-            color: #71717a;
-            font-size: 13px;
+            padding: 60px 20px;
+            color: var(--text-muted);
         }
 
         .spinner {
             display: inline-block;
-            width: 24px;
-            height: 24px;
-            border: 2px solid #3f3f46;
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
             border-top-color: #ff3366;
             border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+            animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
@@ -387,23 +558,56 @@
             }
         }
 
-        /* Reload button */
         .reload-btn {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             width: 100%;
             background: linear-gradient(135deg, #ff3366, #ff7733);
             color: #fff;
             border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            margin-top: 8px;
+            margin-top: 24px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 51, 102, 0.3);
         }
 
         .reload-btn:hover {
-            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 51, 102, 0.4);
+        }
+
+        .reload-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .funnel-row {
+                flex-direction: column;
+            }
+
+            .conversion-row {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .pie-wrap {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .source-table th:nth-child(2),
+            .source-table td:nth-child(2) {
+                display: none;
+                /* Ẩn progress bar trên mobile để đỡ chật */
+            }
         }
     </style>
 </head>
@@ -411,31 +615,54 @@
 <body>
 
     <div class="header">
-        <h1>Bao Cao Chien Dich</h1>
-        <p id="reportTime"></p>
+        <h1>Báo Cáo Chiến Dịch</h1>
+        <p id="reportTime">Đang cập nhật...</p>
     </div>
 
     <div class="container">
+        <!-- Vùng Loading -->
         <div id="loadingArea" class="loading">
             <div class="spinner"></div>
-            <p style="margin-top:10px">Dang tai du lieu...</p>
+            <p style="margin-top:16px; font-size:14px; font-weight:500;">Đang đồng bộ dữ liệu...</p>
         </div>
 
+        <!-- Vùng Hiển Thị Báo Cáo -->
         <div id="reportArea" style="display:none">
+
             <!-- Funnel Cards -->
             <div class="funnel-row">
                 <div class="metric-card card-traffic" onclick="togglePanel('traffic')">
-                    <div class="icon">&#x1F310;</div>
+                    <div class="icon-wrap">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9">
+                            </path>
+                        </svg>
+                    </div>
                     <div class="value" id="trafficVal">0</div>
                     <div class="label">Traffic</div>
                 </div>
+
                 <div class="metric-card card-lead" onclick="togglePanel('lead')">
-                    <div class="icon">&#x1F464;</div>
+                    <div class="icon-wrap">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                    </div>
                     <div class="value" id="leadVal">0</div>
                     <div class="label">Lead</div>
                 </div>
+
                 <div class="metric-card card-order" onclick="togglePanel('order')">
-                    <div class="icon">&#x1F6D2;</div>
+                    <div class="icon-wrap">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                    </div>
                     <div class="value" id="orderVal">0</div>
                     <div class="label">Order</div>
                 </div>
@@ -443,40 +670,72 @@
 
             <!-- Conversion Rates -->
             <div class="conversion-row">
-                <div class="conv-rate">Traffic &#x2192; Lead: <span id="convTL">0%</span></div>
-                <div class="conv-rate">Lead &#x2192; Order: <span id="convLO">0%</span></div>
+                <div class="conv-rate">
+                    Traffic <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg> Lead
+                    <span id="convTL">0%</span>
+                </div>
+                <div class="conv-rate">
+                    Lead <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                    </svg> Order
+                    <span id="convLO">0%</span>
+                </div>
             </div>
 
-            <!-- Traffic Detail -->
+            <!-- Panel: Traffic Detail -->
             <div class="detail-panel" id="panel-traffic">
-                <div class="panel-header" style="color:#3b82f6">&#x1F310; Chi Tiet Traffic</div>
+                <div class="panel-header" style="color:var(--c-traffic)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9">
+                        </path>
+                    </svg>
+                    Chi tiết Traffic
+                </div>
                 <div class="panel-body">
+                    <!-- Phân loại Nguồn chính -->
                     <div class="pie-wrap">
                         <div class="pie" id="pieTraffic">
-                            <div class="pie-center"></div>
+                            <div class="pie-center">
+                                <span class="pie-total-val" id="pieTrafficTotal">0</span>
+                                <span class="pie-total-lbl">Tổng</span>
+                            </div>
                         </div>
                         <div class="legend" id="legendTraffic"></div>
                     </div>
                     <table class="source-table" id="tableTraffic">
                         <thead>
                             <tr>
-                                <th>Nguon</th>
-                                <th class="bar-cell"></th>
-                                <th>SL</th>
+                                <th>Nguồn</th>
+                                <th class="bar-cell">Tỷ trọng</th>
+                                <th>Số lượng</th>
                                 <th>%</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
 
-                    <!-- Nguon Click section -->
+                    <!-- Bổ sung Nguồn Click (Domain) -->
                     <div id="clickFromSection"
-                        style="display:none; margin-top:20px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.06);">
-                        <div style="font-size:14px; font-weight:700; color:#06b6d4; margin-bottom:12px;">&#x1F517; Nguon
-                            Click (Domain)</div>
-                        <div class="pie-wrap">
+                        style="display:none; margin-top:32px; padding-top:24px; border-top:1px dashed var(--border-color);">
+                        <h3
+                            style="font-size: 15px; font-weight: 700; color: #06b6d4; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
+                                style="width:18px;height:18px">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+                                </path>
+                            </svg>
+                            Nguồn Click (Domain)
+                        </h3>
+                        <div class="pie-wrap" style="background: rgba(6, 182, 212, 0.05);">
                             <div class="pie" id="pieClickFrom">
-                                <div class="pie-center"></div>
+                                <div class="pie-center">
+                                    <span class="pie-total-val" id="pieClickFromTotal">0</span>
+                                    <span class="pie-total-lbl">Click</span>
+                                </div>
                             </div>
                             <div class="legend" id="legendClickFrom"></div>
                         </div>
@@ -484,8 +743,8 @@
                             <thead>
                                 <tr>
                                     <th>Domain</th>
-                                    <th class="bar-cell"></th>
-                                    <th>SL</th>
+                                    <th class="bar-cell">Tỷ trọng</th>
+                                    <th>Số lượng</th>
                                     <th>%</th>
                                 </tr>
                             </thead>
@@ -495,58 +754,85 @@
                 </div>
             </div>
 
-            <!-- Lead Detail -->
+            <!-- Panel: Lead Detail -->
             <div class="detail-panel" id="panel-lead">
-                <div class="panel-header" style="color:#22c55e">&#x1F464; Chi Tiet Lead</div>
+                <div class="panel-header" style="color:var(--c-lead)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                    Chi tiết Lead
+                </div>
                 <div class="panel-body">
                     <div class="pie-wrap">
                         <div class="pie" id="pieLead">
-                            <div class="pie-center"></div>
+                            <div class="pie-center">
+                                <span class="pie-total-val" id="pieLeadTotal">0</span>
+                                <span class="pie-total-lbl">Tổng</span>
+                            </div>
                         </div>
                         <div class="legend" id="legendLead"></div>
                     </div>
                     <table class="source-table" id="tableLead">
                         <thead>
                             <tr>
-                                <th>Nguon</th>
-                                <th class="bar-cell"></th>
-                                <th>SL</th>
+                                <th>Nguồn</th>
+                                <th class="bar-cell">Tỷ trọng</th>
+                                <th>Số lượng</th>
                                 <th>%</th>
                             </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
-                    <button class="ref-btn" onclick="loadReferrals()">Xem chi tiet Referral &#x2192;</button>
+
+                    <button class="ref-btn" onclick="loadReferrals()">
+                        Xem chi tiết Referral
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"
+                            style="width:16px; height:16px">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
                     <div class="ref-list" id="refList"></div>
                 </div>
             </div>
 
-            <!-- Order Detail -->
+            <!-- Panel: Order Detail -->
             <div class="detail-panel" id="panel-order">
-                <div class="panel-header" style="color:#f59e0b">&#x1F6D2; Chi Tiet Order</div>
+                <div class="panel-header" style="color:var(--c-order)">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+                    Chi tiết Order
+                </div>
                 <div class="panel-body">
                     <div class="order-split">
                         <div class="split-card split-paid">
                             <div class="split-val" id="orderPaid">0</div>
-                            <div class="split-label">Tra phi</div>
+                            <div class="split-label">Đơn trả phí</div>
                         </div>
                         <div class="split-card split-free">
                             <div class="split-val" id="orderFree">0</div>
-                            <div class="split-label">Mien phi</div>
+                            <div class="split-label">Đơn miễn phí</div>
                         </div>
                     </div>
                     <div class="pie-wrap">
                         <div class="pie" id="pieOrder">
-                            <div class="pie-center"></div>
+                            <div class="pie-center">
+                                <span class="pie-total-val" id="pieOrderTotal">0</span>
+                                <span class="pie-total-lbl">Tổng</span>
+                            </div>
                         </div>
                         <div class="legend" id="legendOrder"></div>
                     </div>
                     <table class="source-table" id="tableOrder">
                         <thead>
                             <tr>
-                                <th>Nguon</th>
-                                <th class="bar-cell"></th>
-                                <th>SL</th>
+                                <th>Nguồn</th>
+                                <th class="bar-cell">Tỷ trọng</th>
+                                <th>Số lượng</th>
                                 <th>%</th>
                             </tr>
                         </thead>
@@ -555,77 +841,111 @@
                 </div>
             </div>
 
-            <button class="reload-btn" onclick="loadReport()">&#x21BB; Tai lai du lieu</button>
+            <button class="reload-btn" onclick="loadReport()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                    </path>
+                </svg>
+                Tải lại dữ liệu mới nhất
+            </button>
         </div>
     </div>
 
     <script>
-        var COLORS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16'];
+        // Mảng màu gradient đẹp mắt cho biểu đồ
+        const CHART_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#f43f5e', '#84cc16'];
+        const SECONDARY_COLORS = ['#06b6d4', '#8b5cf6', '#ec4899', '#f43f5e', '#f59e0b', '#10b981', '#3b82f6', '#84cc16'];
 
         function fmt(n) {
             return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
 
         function togglePanel(type) {
-            var panels = document.querySelectorAll('.detail-panel');
-            var cards = document.querySelectorAll('.metric-card');
-            var panel = document.getElementById('panel-' + type);
-            var isShown = panel.classList.contains('show');
+            const panels = document.querySelectorAll('.detail-panel');
+            const cards = document.querySelectorAll('.metric-card');
+            const targetPanel = document.getElementById('panel-' + type);
+            const targetCard = document.querySelector('.card-' + type);
 
-            panels.forEach(function (p) { p.classList.remove('show'); });
-            cards.forEach(function (c) { c.classList.remove('active'); });
+            const isShown = targetPanel.classList.contains('show');
+
+            // Reset all
+            panels.forEach(p => p.classList.remove('show'));
+            cards.forEach(c => c.classList.remove('active'));
 
             if (!isShown) {
-                panel.classList.add('show');
-                document.querySelector('.card-' + type).classList.add('active');
+                targetPanel.classList.add('show');
+                targetCard.classList.add('active');
+
+                // Trigger animation for progress bars inside the opened panel
+                setTimeout(() => {
+                    const bars = targetPanel.querySelectorAll('.bar-fill');
+                    bars.forEach(bar => {
+                        bar.style.width = bar.getAttribute('data-width');
+                    });
+                }, 50);
             }
         }
 
-        function buildPieChart(containerId, sources, total) {
-            var pie = document.getElementById(containerId);
-            var sorted = Object.entries(sources).sort(function (a, b) { return b[1] - a[1]; });
-            var gradParts = [];
-            var cumPct = 0;
+        function buildPieChart(containerId, sources, total, colorScheme = CHART_COLORS) {
+            const pie = document.getElementById(containerId);
+            const totalLabel = document.getElementById(containerId + 'Total');
+            if (totalLabel) totalLabel.textContent = fmt(total);
 
-            sorted.forEach(function (entry, i) {
-                var pct = total > 0 ? (entry[1] / total) * 100 : 0;
-                var color = COLORS[i % COLORS.length];
-                gradParts.push(color + ' ' + cumPct + '% ' + (cumPct + pct) + '%');
+            const sorted = Object.entries(sources).sort((a, b) => b[1] - a[1]);
+            let gradParts = [];
+            let cumPct = 0;
+
+            sorted.forEach((entry, i) => {
+                const pct = total > 0 ? (entry[1] / total) * 100 : 0;
+                const color = colorScheme[i % colorScheme.length];
+                gradParts.push(`${color} ${cumPct}% ${cumPct + pct}%`);
                 cumPct += pct;
             });
 
-            pie.style.background = 'conic-gradient(' + gradParts.join(', ') + ')';
+            pie.style.background = `conic-gradient(${gradParts.join(', ')})`;
         }
 
-        function buildLegend(legendId, sources, total) {
-            var el = document.getElementById(legendId);
-            var sorted = Object.entries(sources).sort(function (a, b) { return b[1] - a[1]; });
-            var html = '';
-            sorted.forEach(function (entry, i) {
-                var pct = total > 0 ? ((entry[1] / total) * 100).toFixed(1) : 0;
-                var color = COLORS[i % COLORS.length];
-                html += '<div class="legend-item">'
-                    + '<div class="legend-dot" style="background:' + color + '"></div>'
-                    + '<span>' + entry[0] + '</span>'
-                    + '<span class="pct">' + pct + '%</span></div>';
+        function buildLegend(legendId, sources, total, colorScheme = CHART_COLORS) {
+            const el = document.getElementById(legendId);
+            const sorted = Object.entries(sources).sort((a, b) => b[1] - a[1]);
+            let html = '';
+
+            sorted.forEach((entry, i) => {
+                const pct = total > 0 ? ((entry[1] / total) * 100).toFixed(1) : 0;
+                const color = colorScheme[i % colorScheme.length];
+                html += `
+                    <div class="legend-item">
+                        <div class="legend-dot" style="background:${color}; color:${color}"></div>
+                        <span style="color:#d4d4d8">${entry[0]}</span>
+                        <span class="pct">${pct}%</span>
+                    </div>`;
             });
             el.innerHTML = html;
         }
 
-        function buildTable(tableId, sources, total, barColor) {
-            var tbody = document.querySelector('#' + tableId + ' tbody');
-            var sorted = Object.entries(sources).sort(function (a, b) { return b[1] - a[1]; });
-            var maxVal = sorted.length > 0 ? sorted[0][1] : 1;
-            var html = '';
+        function buildTable(tableId, sources, total, colorScheme = CHART_COLORS) {
+            const tbody = document.querySelector(`#${tableId} tbody`);
+            const sorted = Object.entries(sources).sort((a, b) => b[1] - a[1]);
+            const maxVal = sorted.length > 0 ? sorted[0][1] : 1;
+            let html = '';
 
-            sorted.forEach(function (entry, i) {
-                var pct = total > 0 ? ((entry[1] / total) * 100).toFixed(1) : 0;
-                var barW = maxVal > 0 ? ((entry[1] / maxVal) * 100) : 0;
-                var color = COLORS[i % COLORS.length];
-                html += '<tr><td>' + entry[0] + '</td>'
-                    + '<td class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:' + barW + '%;background:' + color + '"></div></div></td>'
-                    + '<td>' + fmt(entry[1]) + '</td>'
-                    + '<td style="color:#71717a">' + pct + '%</td></tr>';
+            sorted.forEach((entry, i) => {
+                const pct = total > 0 ? ((entry[1] / total) * 100).toFixed(1) : 0;
+                const barW = maxVal > 0 ? ((entry[1] / maxVal) * 100) : 0;
+                const color = colorScheme[i % colorScheme.length];
+
+                html += `
+                    <tr>
+                        <td>${entry[0]}</td>
+                        <td class="bar-cell">
+                            <div class="bar-bg">
+                                <div class="bar-fill" data-width="${barW}%" style="width: 0%; background: ${color}; box-shadow: 0 0 10px ${color}"></div>
+                            </div>
+                        </td>
+                        <td>${fmt(entry[1])}</td>
+                        <td style="color:var(--text-muted)">${pct}%</td>
+                    </tr>`;
             });
             tbody.innerHTML = html;
         }
@@ -639,8 +959,10 @@
                 document.getElementById('reportArea').style.display = 'block';
 
                 // Timestamp
-                var now = new Date();
-                document.getElementById('reportTime').textContent = 'Cap nhat: ' + now.toLocaleString('vi-VN');
+                const now = new Date();
+                document.getElementById('reportTime').textContent = 'Cập nhật lần cuối: ' +
+                    now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }) + ' - ' +
+                    now.toLocaleDateString('vi-VN');
 
                 // Metric values
                 document.getElementById('trafficVal').textContent = fmt(data.traffic.total);
@@ -653,71 +975,87 @@
                 document.getElementById('orderPaid').textContent = fmt(data.orders.paid);
                 document.getElementById('orderFree').textContent = fmt(data.orders.free);
 
-                // Traffic chart
+                // Render Charts & Tables
                 if (data.traffic.total > 0) {
                     buildPieChart('pieTraffic', data.traffic.sources, data.traffic.total);
                     buildLegend('legendTraffic', data.traffic.sources, data.traffic.total);
-                    buildTable('tableTraffic', data.traffic.sources, data.traffic.total, '#3b82f6');
+                    buildTable('tableTraffic', data.traffic.sources, data.traffic.total);
                 }
 
-                // ClickFrom chart (Nguon Click)
+                // Render ClickFrom Chart (Nguồn Click)
                 if (data.traffic.clickFromSources && Object.keys(data.traffic.clickFromSources).length > 0) {
-                    var cfTotal = 0;
-                    Object.values(data.traffic.clickFromSources).forEach(function (v) { cfTotal += v; });
+                    const cfTotal = Object.values(data.traffic.clickFromSources).reduce((a, b) => a + b, 0);
                     document.getElementById('clickFromSection').style.display = 'block';
-                    buildPieChart('pieClickFrom', data.traffic.clickFromSources, cfTotal);
-                    buildLegend('legendClickFrom', data.traffic.clickFromSources, cfTotal);
-                    buildTable('tableClickFrom', data.traffic.clickFromSources, cfTotal, '#06b6d4');
+
+                    // Sử dụng mảng SECONDARY_COLORS cho phần Nguồn Click để đổi vị trí màu cho đỡ trùng lặp
+                    buildPieChart('pieClickFrom', data.traffic.clickFromSources, cfTotal, SECONDARY_COLORS);
+                    buildLegend('legendClickFrom', data.traffic.clickFromSources, cfTotal, SECONDARY_COLORS);
+                    buildTable('tableClickFrom', data.traffic.clickFromSources, cfTotal, SECONDARY_COLORS);
+                } else {
+                    document.getElementById('clickFromSection').style.display = 'none';
                 }
 
-                // Lead chart
                 if (data.leads.total > 0) {
                     buildPieChart('pieLead', data.leads.sources, data.leads.total);
                     buildLegend('legendLead', data.leads.sources, data.leads.total);
-                    buildTable('tableLead', data.leads.sources, data.leads.total, '#22c55e');
+                    buildTable('tableLead', data.leads.sources, data.leads.total);
                 }
 
-                // Order chart
                 if (data.orders.total > 0) {
                     buildPieChart('pieOrder', data.orders.sources, data.orders.total);
                     buildLegend('legendOrder', data.orders.sources, data.orders.total);
-                    buildTable('tableOrder', data.orders.sources, data.orders.total, '#f59e0b');
+                    buildTable('tableOrder', data.orders.sources, data.orders.total);
                 }
 
+                // Mở tab đầu tiên mặc định nếu chưa tab nào mở
+                const hasActive = document.querySelector('.metric-card.active');
+                if (!hasActive) togglePanel('traffic');
+
             }).withFailureHandler(function (err) {
-                document.getElementById('loadingArea').innerHTML = '<p style="color:#ef4444">Loi: ' + err.message + '</p>';
+                document.getElementById('loadingArea').innerHTML = `
+                    <p style="color:#ef4444; background:rgba(239,68,68,0.1); padding:16px; border-radius:8px;">
+                        Lỗi kết nối dữ liệu: ${err.message || 'Vui lòng thử lại sau'}
+                    </p>`;
             }).getReportData();
         }
 
         function loadReferrals() {
-            var list = document.getElementById('refList');
+            const list = document.getElementById('refList');
             if (list.classList.contains('show')) {
                 list.classList.remove('show');
                 return;
             }
-            list.innerHTML = '<p style="color:#71717a;font-size:11px;padding:8px 0">Dang tai...</p>';
+
+            list.innerHTML = `
+                <div style="text-align:center; padding:12px;">
+                    <div class="spinner" style="width:20px; height:20px; border-width:2px;"></div>
+                </div>`;
             list.classList.add('show');
 
             google.script.run.withSuccessHandler(function (data) {
                 if (!data || data.length === 0) {
-                    list.innerHTML = '<p style="color:#71717a;font-size:11px;padding:8px 0">Chua co referral nao</p>';
+                    list.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:12px; padding:12px;">Chưa có dữ liệu referral.</p>';
                     return;
                 }
-                var html = '';
-                data.forEach(function (r) {
-                    html += '<div class="ref-item">'
-                        + '<div><span class="ref-name">' + r.name + '</span><br>'
-                        + '<span style="color:#71717a;font-size:10px">' + r.email + '</span></div>'
-                        + '<div class="ref-count">' + r.referralCount + ' ref</div></div>';
+                let html = '';
+                data.forEach(r => {
+                    html += `
+                        <div class="ref-item">
+                            <div>
+                                <div class="ref-name">${r.name}</div>
+                                <div class="ref-email">${r.email}</div>
+                            </div>
+                            <div class="ref-count">${r.referralCount} giới thiệu</div>
+                        </div>`;
                 });
                 list.innerHTML = html;
             }).withFailureHandler(function (err) {
-                list.innerHTML = '<p style="color:#ef4444;font-size:11px">Loi: ' + err.message + '</p>';
+                list.innerHTML = `<p style="color:#ef4444; font-size:12px; padding:12px;">Lỗi: ${err.message}</p>`;
             }).getReferralDetails();
         }
 
-        // Auto-load on open
-        loadReport();
+        // Khởi chạy khi load xong web
+        window.addEventListener('DOMContentLoaded', loadReport);
     </script>
 </body>
 
