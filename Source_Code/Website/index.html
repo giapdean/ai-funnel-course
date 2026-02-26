@@ -1092,9 +1092,10 @@ GAS Kit là bộ 6 AI Skill chuyên dụng giúp bạn lên plan, viết code, s
 
         var trafficSource = detectSource();
 
-        // Send tracking beacon (fire-and-forget, no mode:'no-cors' to avoid body drop on redirect)
+        // Send tracking beacon (fire-and-forget, mode:'no-cors' because we don't need the response)
         fetch(API_URL, {
             method: 'POST',
+            mode: 'no-cors',
             body: JSON.stringify({
                 action: 'track_visit',
                 source: trafficSource,
