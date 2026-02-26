@@ -250,10 +250,13 @@ function checkAndGrantFreeAccess(referrerRefCode) {
     const rowReferredBy = String(row[referredByCol] || "").trim();
     const rowStatus = String(row[statusCol] || "").trim().toLowerCase();
 
-    // Tìm hàng của người giới thiệu
-    if (rowRefCode === refCodeTarget) {
-      referrerRow = i + 1;
-      referrerData = row;
+    // Tìm hàng của người giới thiệu (dùng endsWith để khớp cả RefCode đầy đủ lẫn rút gọn)
+    if (rowRefCode === refCodeTarget || rowRefCode.endsWith(refCodeTarget) || refCodeTarget.endsWith(rowRefCode)) {
+      // Chỉ lấy row đầu tiên tìm được (ưu tiên exact match)
+      if (referrerRow < 0) {
+        referrerRow = i + 1;
+        referrerData = row;
+      }
     }
     // Đếm số người được giới thiệu (và đã đăng ký thật - Pending/Paid/Free)
     if (rowReferredBy === refCodeTarget && (rowStatus === "pending" || rowStatus === "paid" || rowStatus === "free")) {
